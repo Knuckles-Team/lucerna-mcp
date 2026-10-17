@@ -9,7 +9,6 @@ __all__: list[str] = []
 
 CORE_MODULES = ["opensearch_mcp.api_client"]
 OPTIONAL_MODULES = {
-    "opensearch_mcp.agent_server": "agent",
     "opensearch_mcp.mcp_server": "mcp",
 }
 

@@ -25,7 +25,7 @@ mission statement). This module holds that structurally, not by convention:
   construction time (verified against opensearch-py 3.2.0's own source —
   see ``api/api_client_base.py``'s module docstring).
 
-Uses the fleet's shared ``agent_utilities.mcp.delegated_auth`` RFC 8693
+Uses the fleet's shared ``agent_connector_sdk.mcp.delegated_auth`` RFC 8693
 token-exchange helper (the same mechanism ``gitlab-api``/``twenty-mcp`` use)
 to exchange the MCP-layer caller's Keycloak (realm ``homelab``) token for one
 scoped to the ``opensearch`` Keycloak client audience.
@@ -66,7 +66,7 @@ def _delegated_token(config: dict[str, Any] | None) -> str:
     Raises rather than returning an empty/``None`` token — there is no
     fallback path in this package to a fixed or service-level credential.
     """
-    # NOTE: intentionally still agent_utilities, like agent_server.py (see recipe
+    # NOTE: intentionally still agent_connector_sdk, like agent_server.py (see recipe
     # Pitfall #1). agent_connector_sdk.auth.delegation exists but
     # agent_connector_sdk.mcp.server.create_mcp_server's own module docstring
     # states it deliberately leaves "delegation ... middleware" out of the
@@ -75,11 +75,9 @@ def _delegated_token(config: dict[str, Any] | None) -> str:
     # entire contract is "never fall back to a bypass credential" (CA-43) —
     # swapping this import without a verified, request-scoped equivalent
     # would risk a silent security regression, so it stays on the
-    # fleet-proven agent_utilities path pending that verification.
-    from agent_utilities.mcp.delegated_auth import (  # noqa: PLC0415
-        get_delegated_token,
-        is_delegation_enabled,
-    )
+    # fleet-proven agent_connector_sdk path pending that verification.
+    from agent_connector_sdk.auth.delegation import get_delegated_token
+    from agent_connector_sdk.auth.delegation import is_delegation_enabled
 
     if not is_delegation_enabled(config):
         raise OpenSearchApiError(

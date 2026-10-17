@@ -27,7 +27,7 @@ def test_delegated_token_raises_when_delegation_disabled(monkeypatch):
     disabled, this must raise, never fall back to a fixed credential (no
     such fallback exists anywhere in this module)."""
     monkeypatch.setattr(
-        "agent_utilities.mcp.delegated_auth.is_delegation_enabled", lambda config: False
+        "agent_connector_sdk.auth.delegation.is_delegation_enabled", lambda config: False
     )
 
     with pytest.raises(OpenSearchApiError, match="OIDC delegation is not enabled"):
@@ -38,13 +38,13 @@ def test_delegated_token_wraps_exchange_failure(monkeypatch):
     """A token-exchange failure must surface as OpenSearchApiError, not the
     raw underlying exception, and must never return an empty token."""
     monkeypatch.setattr(
-        "agent_utilities.mcp.delegated_auth.is_delegation_enabled", lambda config: True
+        "agent_connector_sdk.auth.delegation.is_delegation_enabled", lambda config: True
     )
 
     def _boom(**kwargs):
         raise RuntimeError("token endpoint unreachable")
 
-    monkeypatch.setattr("agent_utilities.mcp.delegated_auth.get_delegated_token", _boom)
+    monkeypatch.setattr("agent_connector_sdk.auth.delegation.get_delegated_token", _boom)
 
     with pytest.raises(OpenSearchApiError, match="refusing to fall back"):
         auth_module._delegated_token(None)
