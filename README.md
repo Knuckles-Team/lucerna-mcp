@@ -20,7 +20,7 @@
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/opensearch-mcp)
 ![PyPI - Implementation](https://img.shields.io/pypi/implementation/opensearch-mcp)
 
-*Version: 0.1.0*
+*Version: 0.2.0*
 
 > **Documentation** — Installation, deployment, and usage across the API, CLI, MCP,
 > [official documentation](https://knuckles-team.github.io/opensearch-mcp/).

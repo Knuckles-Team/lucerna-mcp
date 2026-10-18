@@ -2,7 +2,7 @@
 
 from opensearch_mcp.api.api_client_opensearch import OpenSearchApi, OpenSearchApiError
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = ["Api", "OpenSearchApiError"]
 

@@ -14,7 +14,7 @@ license: MIT
 tags: [opensearch, search, index, mcp]
 metadata:
   author: Genius
-  version: '0.1.0'
+  version: '0.2.0'
 ---
 # OpenSearch Index Operations
 
