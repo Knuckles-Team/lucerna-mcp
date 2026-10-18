@@ -6,8 +6,6 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Python OpenSearch API + MCP Server + A2A Agent — a typed, deterministic OpenSearch (CA-50 search tier) tool surface for the agent-utilities ecosystem.">
-      
       
       
         <link rel="canonical" href="https://knuckles-team.github.io/opensearch-mcp/configuration/">
@@ -605,7 +603,7 @@
 for the full, authoritative list — the code (<code>auth.py</code>, <code>mcp/mcp_opensearch.py</code>,
 <code>kg_ingest.py</code>) is the source of truth; <code>.env.example</code>, every <code>mcp_config*.json</code>,
 <code>docker/*compose*.yml</code>, and this table must all match it exactly (enforced by
-<code>python -m agent_utilities.mcp.check_env_var_drift --check</code>).</p>
+<code>python -m agent_connector_sdk.mcp.check_env_var_drift --check</code>).</p>
 <h2 id="delegation-is-not-optional">Delegation is not optional<a class="headerlink" href="#delegation-is-not-optional" title="Permanent link">&para;</a></h2>
 <p>Unlike most fleet packages, <code>opensearch-mcp</code> has <strong>no fixed/service-credential
 fallback</strong>. <code>ENABLE_DELEGATION=True</code> plus a working <code>OIDC_CONFIG_URL</code> /
@@ -622,7 +620,7 @@ valid token for this audience carries the <code>roles</code> claim OpenSearch's
 <code>openid_auth_domain</code> maps directly to its own backend roles.</p>
 <h2 id="tls">TLS<a class="headerlink" href="#tls" title="Permanent link">&para;</a></h2>
 <p><code>OPENSEARCH_TLS_PROFILE</code>/<code>OPENSEARCH_TLS_PROFILE_REF</code> select a named outbound
-TLS trust policy (via <code>agent_utilities.core.transport_security</code>). The
+TLS trust policy (via <code>agent_connector_sdk.core.transport_security</code>). The
 homelab's internal CA (<code>homelab-arpa-ca</code>) is trusted fleet-wide via the
 <code>homelab-ca-bundle</code> ConfigMap mount; OpenSearch itself stop its own TLS
 at <code>:9200</code> (the security plugin refuses to run without it) and the ingress
