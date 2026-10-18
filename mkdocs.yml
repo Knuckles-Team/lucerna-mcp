@@ -1,7 +1,7 @@
-site_name: "opensearch-mcp"
-site_url: "https://knuckles-team.github.io/opensearch-mcp/"
-repo_name: "Knuckles-Team/opensearch-mcp"
-repo_url: "https://github.com/Knuckles-Team/opensearch-mcp"
+site_name: "lucerna-mcp"
+site_url: "https://knuckles-team.github.io/lucerna-mcp/"
+repo_name: "Knuckles-Team/lucerna-mcp"
+repo_url: "https://github.com/Knuckles-Team/lucerna-mcp"
 edit_uri: "edit/main/docs/"
 copyright: "Copyright &copy; Knuckles-Team — MIT licensed"
 
@@ -79,9 +79,9 @@ markdown_extensions:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/Knuckles-Team/opensearch-mcp
+      link: https://github.com/Knuckles-Team/lucerna-mcp
     - icon: fontawesome/brands/python
-      link: https://pypi.org/project/opensearch-mcp/
+      link: https://pypi.org/project/lucerna-mcp/
 
 nav:
   - Home: index.md

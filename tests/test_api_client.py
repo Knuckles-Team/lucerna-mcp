@@ -13,7 +13,7 @@ from __future__ import annotations
 import pytest
 from requests import PreparedRequest
 
-from opensearch_mcp.api.api_client_base import (
+from lucerna_mcp.api.api_client_base import (
     OpenSearchApiError,
     _PerCallBearerAuth,
     raise_for_transport_error,

@@ -1,10 +1,10 @@
-# opensearch-mcp - AGENTS
+# lucerna-mcp - AGENTS
 
 > Claude Code loads this file via `CLAUDE.md` (`@AGENTS.md` import) — the two stay
 > in sync. Edit **this** file, not `CLAUDE.md`.
 
 ## Project Structure
-- `opensearch_mcp/`: Main server code (API client, MCP tool groups, KG ingest, skills)
+- `lucerna_mcp/`: Main server code (API client, MCP tool groups, KG ingest, skills)
 - `tests/`: Test suite
 - `docs/`: Architecture documentation
 
@@ -84,7 +84,7 @@ manifest declaration is pending.
 ## connector_manifest.yml / ontology bundle generation status
 
 `connector_manifest.yml` and the ontology bundle
-(`opensearch_mcp/ontology/{certification.json,shapes/connector.shacl.ttl,
+(`lucerna_mcp/ontology/{certification.json,shapes/connector.shacl.ttl,
 mappings/source.yaml,fixtures/records.json,migrations/manifest.json}`) were
 generated via `agent-connector-sdk`'s real generator scripts
 (`generate_connector_manifests.py` / `generate_connector_capability_bundles.py`,
@@ -93,18 +93,18 @@ hand-written. Both scripts require the connector to already be a
 **registered** provider (`agent-connector-sdk/deploy/mcp-fleet.registry.yml` for
 the manifest generator's server-alias lookup; `workspace.yml`'s
 `agent-packages/agents` repository list for the capability-bundle generator's
-`_configured_provider_names` check) — `opensearch-mcp` is not registered in
+`_configured_provider_names` check) — `lucerna-mcp` is not registered in
 either file yet, and per this lane's explicit contract, registering it is
 **not this lane's job**: a coordinator lane (CA-29) does that centrally after
 CA-40..46 all report back, to avoid concurrent edits to shared registration
 files. To produce real generator output anyway (rather than hand-faking
 generated-looking YAML/JSON), this build ran both scripts against **scratch,
 throwaway copies** of `mcp-fleet.registry.yml` and `workspace.yml` (one added
-`opensearch-mcp` entry each, in `/tmp`, never touching the tracked files) via
+`lucerna-mcp` entry each, in `/tmp`, never touching the tracked files) via
 their `--registry`/`--workspace` override parameters, and `--bundled-output`
 pointed at a scratch directory rather than
 `agent_connector_sdk/knowledge_graph/ontology/connector_manifests/` (also never
-touched). The generated artifacts under `opensearch_mcp/ontology/` and
+touched). The generated artifacts under `lucerna_mcp/ontology/` and
 `connector_manifest.yml` at repo root are therefore the real deterministic
 generator output, reproducible byte-for-byte once the coordinator performs
 the real central registration.

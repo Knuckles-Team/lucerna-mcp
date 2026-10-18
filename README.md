@@ -1,29 +1,29 @@
-# Opensearch Mcp
+# Lucerna MCP
 ## CLI or API | MCP
 
-![PyPI - Version](https://img.shields.io/pypi/v/opensearch-mcp)
+![PyPI - Version](https://img.shields.io/pypi/v/lucerna-mcp)
 ![MCP Server](https://badge.mcpx.dev?type=server 'MCP Server')
-![PyPI - Downloads](https://img.shields.io/pypi/dd/opensearch-mcp)
-![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/opensearch-mcp)
-![GitHub forks](https://img.shields.io/github/forks/Knuckles-Team/opensearch-mcp)
-![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/opensearch-mcp)
-![PyPI - License](https://img.shields.io/pypi/l/opensearch-mcp)
-![GitHub](https://img.shields.io/github/license/Knuckles-Team/opensearch-mcp)
-![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/opensearch-mcp)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/Knuckles-Team/opensearch-mcp)
-![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/Knuckles-Team/opensearch-mcp)
-![GitHub issues](https://img.shields.io/github/issues/Knuckles-Team/opensearch-mcp)
-![GitHub top language](https://img.shields.io/github/languages/top/Knuckles-Team/opensearch-mcp)
-![GitHub language count](https://img.shields.io/github/languages/count/Knuckles-Team/opensearch-mcp)
-![GitHub repo size](https://img.shields.io/github/repo-size/Knuckles-Team/opensearch-mcp)
-![GitHub repo file count (file type)](https://img.shields.io/github/directory-file-count/Knuckles-Team/opensearch-mcp)
-![PyPI - Wheel](https://img.shields.io/pypi/wheel/opensearch-mcp)
-![PyPI - Implementation](https://img.shields.io/pypi/implementation/opensearch-mcp)
+![PyPI - Downloads](https://img.shields.io/pypi/dd/lucerna-mcp)
+![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/lucerna-mcp)
+![GitHub forks](https://img.shields.io/github/forks/Knuckles-Team/lucerna-mcp)
+![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/lucerna-mcp)
+![PyPI - License](https://img.shields.io/pypi/l/lucerna-mcp)
+![GitHub](https://img.shields.io/github/license/Knuckles-Team/lucerna-mcp)
+![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/lucerna-mcp)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/Knuckles-Team/lucerna-mcp)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/Knuckles-Team/lucerna-mcp)
+![GitHub issues](https://img.shields.io/github/issues/Knuckles-Team/lucerna-mcp)
+![GitHub top language](https://img.shields.io/github/languages/top/Knuckles-Team/lucerna-mcp)
+![GitHub language count](https://img.shields.io/github/languages/count/Knuckles-Team/lucerna-mcp)
+![GitHub repo size](https://img.shields.io/github/repo-size/Knuckles-Team/lucerna-mcp)
+![GitHub repo file count (file type)](https://img.shields.io/github/directory-file-count/Knuckles-Team/lucerna-mcp)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/lucerna-mcp)
+![PyPI - Implementation](https://img.shields.io/pypi/implementation/lucerna-mcp)
 
 *Version: 0.2.0*
 
 > **Documentation** — Installation, deployment, and usage across the API, CLI, MCP,
-> [official documentation](https://knuckles-team.github.io/opensearch-mcp/).
+> [official documentation](https://knuckles-team.github.io/lucerna-mcp/).
 
 ---
 
@@ -37,7 +37,7 @@
 - [Documentation](#documentation)
 
 ## Overview
-`opensearch-mcp` exposes a standardized interface to the platform's OpenSearch
+`lucerna-mcp` exposes a standardized interface to the platform's OpenSearch
 deployment (CA-50, `http://localhost:9200`) via the Model Context Protocol —
 index/alias/mapping/settings/rollover admin, BM25/k-NN/hybrid search, ingest
 pipeline admin, and document-level-security (DLS) policy read/apply. A
@@ -46,7 +46,7 @@ trigger-only `opensearch_reindex_from_kg` tool records a rebuild request as an
 
 **The single hardest invariant this package holds**: every request carries
 the calling principal's own token, attached fresh on every HTTP call — never
-a fixed/service-level credential. `opensearch_mcp.auth.get_client()` is the
+a fixed/service-level credential. `lucerna_mcp.auth.get_client()` is the
 ONLY client factory in the package; there is no fallback path. See
 [Architecture](#architecture) and `AGENTS.md` for how this is enforced
 structurally.
@@ -62,11 +62,11 @@ Pick the extra that matches what the operator want to run:
 
 | Extra | Installs | Use when |
 |-------|----------|----------|
-| `opensearch-mcp[mcp]` | Connector-focused MCP server (`agent-connector-sdk` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator only run the **MCP server** (smallest install / image) |
-| `opensearch-mcp[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
+| `lucerna-mcp[mcp]` | Connector-focused MCP server (`agent-connector-sdk` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator only run the **MCP server** (smallest install / image) |
+| `lucerna-mcp[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ```bash
-uv pip install "opensearch-mcp[mcp]"
+uv pip install "lucerna-mcp[mcp]"
 ```
 
 ### Container images (`:mcp`)
@@ -74,13 +74,13 @@ uv pip install "opensearch-mcp[mcp]"
 One multi-stage `docker/Dockerfile` builds the MCP-only image (`--target mcp`):
 
 ```bash
-docker build --target mcp   -t opensearch-mcp:mcp    .
+docker build --target mcp   -t lucerna-mcp:mcp    .
 ```
 
 ## Usage
 Run the MCP server directly:
 ```bash
-python -m opensearch_mcp
+python -m lucerna_mcp
 ```
 
 ### MCP Configuration Example (stdio)
@@ -88,9 +88,9 @@ python -m opensearch_mcp
 ```json
 {
   "mcpServers": {
-    "opensearch-mcp": {
+    "lucerna-mcp": {
       "command": "uv",
-      "args": ["run", "opensearch-mcp"],
+      "args": ["run", "lucerna-mcp"],
       "env": {
         "MCP_TOOL_MODE": "intent",
         "OPENSEARCH_URL": "http://localhost:9200",
@@ -149,7 +149,7 @@ predicate from scratch.
 | Variable | Example | Description |
 |----------|---------|-------------|
 | `OPENSEARCH_URL` | `http://localhost:9200` |  |
-| `ENABLE_DELEGATION` | `True` | opensearch-mcp has NO fixed/service-credential fallback — every request carries the calling principal's own token, exchanged for one scoped to the audience below. These flags are the fleet-shared MCP OIDC-delegation surface (agent_connector_sdk.mcp.server_factory / delegated_auth), not opensearch-mcp-specific, but MUST be enabled for this package's tools to work at all: |
+| `ENABLE_DELEGATION` | `True` | lucerna-mcp has NO fixed/service-credential fallback — every request carries the calling principal's own token, exchanged for one scoped to the audience below. These flags are the fleet-shared MCP OIDC-delegation surface (agent_connector_sdk.mcp.server_factory / delegated_auth), not lucerna-mcp-specific, but MUST be enabled for this package's tools to work at all: |
 | `OIDC_CONFIG_URL` | `http://localhost:8080/realms/homelab/.well-known/openid-configuration` |  |
 | `OIDC_CLIENT_ID` | — |  |
 | `OIDC_CLIENT_SECRET_REF` | — |  |
@@ -294,12 +294,12 @@ Provision this package with the consolidated **`agent-connector-sdk-deployment`*
 workflow. It selects an installed-package, editable-source, or immutable-container
 path; records only runtime secret and TLS-profile references in `AgentConfig`; and
 runs doctor, registration, policy, observability, and rollback gates. Ask your agent
-to **"deploy `opensearch-mcp` with agent-connector-sdk-deployment"**.
+to **"deploy `lucerna-mcp` with agent-connector-sdk-deployment"**.
 
 | Install mode | Command |
 |------|---------|
-| Installed package | `uv tool install "opensearch-mcp[mcp]"`, then run `opensearch-mcp` |
-| Immutable container | deploy `registry.example.invalid/opensearch-mcp@sha256:<digest>` through the operator-selected orchestrator |
+| Installed package | `uv tool install "lucerna-mcp[mcp]"`, then run `lucerna-mcp` |
+| Immutable container | deploy `registry.example.invalid/lucerna-mcp@sha256:<digest>` through the operator-selected orchestrator |
 
 The repository embeds no deployment profile, credential value, certificate path, or
 environment-specific endpoint. Supply those at runtime through `AgentConfig` and the

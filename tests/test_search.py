@@ -9,8 +9,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from opensearch_mcp.api.api_client_base import OpenSearchApiError
-from opensearch_mcp.api.api_client_opensearch import OpenSearchApi
+from lucerna_mcp.api.api_client_base import OpenSearchApiError
+from lucerna_mcp.api.api_client_opensearch import OpenSearchApi
 
 
 def _api() -> OpenSearchApi:
