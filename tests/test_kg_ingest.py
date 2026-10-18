@@ -17,7 +17,7 @@ import pytest
 from agent_connector_sdk.ingest import IngestError, KnowledgeIngest
 from epistemic_graph.generated.source_ingestion import SourceIngestionRequest
 
-from opensearch_mcp.kg_ingest import _indexing_run_id, record_indexing_run
+from lucerna_mcp.kg_ingest import _indexing_run_id, record_indexing_run
 
 
 class _FakeTransport:
@@ -37,7 +37,7 @@ class _FakeTransport:
         )
 
     async def store_blob(self, _data: bytes) -> str:
-        raise AssertionError("opensearch-mcp reindex-trigger ingestion carries no media")
+        raise AssertionError("lucerna-mcp reindex-trigger ingestion carries no media")
 
 
 @pytest.fixture

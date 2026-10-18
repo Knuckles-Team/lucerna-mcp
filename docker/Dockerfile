@@ -3,13 +3,13 @@
 # pipelines/scripts/connector_dockerfile.py. Do not hand-edit: change the template or
 # the connector's entry in the script's EXCEPTIONS table, then regenerate.
 #
-# Wheel-only connector image. The published opensearch-mcp wheel is installed from PyPI at
+# Wheel-only connector image. The published lucerna-mcp wheel is installed from PyPI at
 # the exact version in pyproject.toml (kept in sync by .bumpversion.cfg); no source is
 # copied into any stage, and every distribution in the closure must be a wheel
 # (--only-binary :all:). The release pipeline publishes the wheel before this build,
 # so the install retries while the new version propagates through the index.
 #
-#   docker build --target <stage> -t opensearch-mcp:local -f docker/Dockerfile .
+#   docker build --target <stage> -t lucerna-mcp:local -f docker/Dockerfile .
 #   stages: mcp
 FROM python:3.14-slim@sha256:cea0e6040540fb2b965b6e7fb5ffa00871e632eef63719f0ea54bca189ce14a6 AS builder-base
 COPY --from=ghcr.io/astral-sh/uv:0.11.7@sha256:240fb85ab0f263ef12f492d8476aa3a2e4e1e333f7d67fbdd923d00a506a516a /uv /uvx /bin/
@@ -22,7 +22,7 @@ FROM builder-base AS builder-mcp
 RUN --mount=type=cache,target=/root/.cache/uv \
     for attempt in 1 2 3 4 5 6 7 8 9 10; do \
         uv pip install --system --break-system-packages --only-binary :all: \
-            --refresh-package opensearch-mcp "opensearch-mcp[mcp]==0.2.1" && exit 0; \
+            --refresh-package lucerna-mcp "lucerna-mcp[mcp]==0.3.0" && exit 0; \
         echo "wheel not installable yet (attempt ${attempt}); retrying in 30s"; \
         sleep 30; \
     done; \
@@ -54,4 +54,4 @@ RUN groupadd --system --gid 10001 app \
 FROM runtime-base AS mcp
 COPY --from=builder-mcp /usr/local /usr/local
 USER 10001:10001
-CMD ["opensearch-mcp"]
+CMD ["lucerna-mcp"]

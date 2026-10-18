@@ -1,11 +1,20 @@
 # Changelog
 
-All notable changes to `opensearch-mcp` will be documented in this file.
+All notable changes to `lucerna-mcp` will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.3.0] - 2026-10-18
+
+### Changed
+- Renamed from opensearch-mcp to lucerna-mcp (PyPI distribution, import package
+  `lucerna_mcp`, CLI `lucerna-mcp`, Docker image `knucklessg1/lucerna-mcp`, GitHub
+  repository). The `OPENSEARCH_*` environment variables name the OpenSearch system
+  and are unchanged. Spec IDs keep the `CONN-OPENSEARCH-MCP` prefix.
+- agent-connector-sdk 0.3.6 floor: per-operation tools are `lucerna_<operation>`.
 
 ## [0.1.0] - 2026-08-26
 

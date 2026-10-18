@@ -11,7 +11,7 @@ overrides = [{ name = "fastmcp-slim", extras = ["client", "server"], specifier =
 
 [[package]]
 name = "agent-connector-sdk"
-version = "0.2.1"
+version = "0.3.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
@@ -23,8 +23,9 @@ dependencies = [
     { name = "pydantic" },
     { name = "pyyaml" },
 ]
+sdist = { url = "https://files.pythonhosted.org/packages/dd/f0/f3d161c55a3d0e35ef2689877ebd34cf6d332f2fe5cb386063fe221130ac/agent_connector_sdk-0.3.7.tar.gz", hash = "sha256:33828364f108145b0d5a56d54909b91673eacbd8b4c46c20fad56540e7a32124", size = 739532, upload-time = "2026-10-18T14:21:35.265Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2a/c0/f68a33b9344f5f7f2b9bb4a5baf281d6279f8189d04630d1544850d2a684/agent_connector_sdk-0.2.1-py3-none-any.whl", hash = "sha256:0bc8f997b05fbb4358c1e44cfd5d526c7715a8d4d0d14ba7624883c22d3a0719", size = 708662, upload-time = "2026-10-17T15:37:16.917Z" },
+    { url = "https://files.pythonhosted.org/packages/77/e5/d308d6e000fd657ad4fafa5e52e59404add564af34348e0422dda02a20ce/agent_connector_sdk-0.3.7-py3-none-any.whl", hash = "sha256:9986c86a9b77b7e433667789716df05b11b1c11623b743807c17bbb365a9a1b4", size = 740474, upload-time = "2026-10-18T14:21:33.785Z" },
 ]
 
 [package.optional-dependencies]
@@ -880,6 +881,52 @@ wheels = [
 ]
 
 [[package]]
+name = "lucerna-mcp"
+version = "0.3.0"
+source = { editable = "." }
+dependencies = [
+    { name = "agent-connector-sdk", extra = ["mcp"] },
+    { name = "opensearch-py" },
+    { name = "requests" },
+]
+
+[package.optional-dependencies]
+all = [
+    { name = "agent-connector-sdk", extra = ["mcp"] },
+]
+mcp = [
+    { name = "agent-connector-sdk", extra = ["mcp"] },
+]
+test = [
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "pytest-cov" },
+    { name = "pytest-xdist" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest-timeout" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "agent-connector-sdk", extras = ["mcp"], specifier = ">=0.3.6,<1.0.0" },
+    { name = "agent-connector-sdk", extras = ["mcp"], marker = "extra == 'all'", specifier = ">=0.3.6,<1.0.0" },
+    { name = "agent-connector-sdk", extras = ["mcp"], marker = "extra == 'mcp'", specifier = ">=0.3.6,<1.0.0" },
+    { name = "opensearch-py", specifier = ">=3.2.0,<4.0.0" },
+    { name = "pytest", marker = "extra == 'test'", specifier = ">=9.1.1" },
+    { name = "pytest-asyncio", marker = "extra == 'test'", specifier = ">=1.4.0" },
+    { name = "pytest-cov", marker = "extra == 'test'", specifier = ">=7.1.0" },
+    { name = "pytest-xdist", marker = "extra == 'test'", specifier = ">=3.8.0" },
+    { name = "requests", specifier = ">=2.34.2" },
+]
+provides-extras = ["mcp", "all", "test"]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest-timeout", specifier = ">=2.4.0" }]
+
+[[package]]
 name = "markdown-it-py"
 version = "4.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1012,52 +1059,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/2b/32/0c9bd3e4e847cd611
 wheels = [
     { url = "https://files.pythonhosted.org/packages/31/57/9d3eb823a03c33e9d4c810e6a3276e3a6dc820a7fdc0961db2c04e613817/openapi_pydantic-0.6.0-py3-none-any.whl", hash = "sha256:8bd6d548a250da37db96f461bcd52b3468e8834ad7d6db14b00a6b2ebbd163a3", size = 96931, upload-time = "2026-10-02T12:19:58.917Z" },
 ]
-
-[[package]]
-name = "opensearch-mcp"
-version = "0.2.1"
-source = { editable = "." }
-dependencies = [
-    { name = "agent-connector-sdk", extra = ["mcp"] },
-    { name = "opensearch-py" },
-    { name = "requests" },
-]
-
-[package.optional-dependencies]
-all = [
-    { name = "agent-connector-sdk", extra = ["mcp"] },
-]
-mcp = [
-    { name = "agent-connector-sdk", extra = ["mcp"] },
-]
-test = [
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "pytest-cov" },
-    { name = "pytest-xdist" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "pytest-timeout" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "agent-connector-sdk", extras = ["mcp"], specifier = ">=0.2.1,<1.0.0" },
-    { name = "agent-connector-sdk", extras = ["mcp"], marker = "extra == 'all'", specifier = ">=0.2.1,<1.0.0" },
-    { name = "agent-connector-sdk", extras = ["mcp"], marker = "extra == 'mcp'", specifier = ">=0.2.1,<1.0.0" },
-    { name = "opensearch-py", specifier = ">=3.2.0,<4.0.0" },
-    { name = "pytest", marker = "extra == 'test'", specifier = ">=9.1.1" },
-    { name = "pytest-asyncio", marker = "extra == 'test'", specifier = ">=1.4.0" },
-    { name = "pytest-cov", marker = "extra == 'test'", specifier = ">=7.1.0" },
-    { name = "pytest-xdist", marker = "extra == 'test'", specifier = ">=3.8.0" },
-    { name = "requests", specifier = ">=2.34.2" },
-]
-provides-extras = ["mcp", "all", "test"]
-
-[package.metadata.requires-dev]
-dev = [{ name = "pytest-timeout", specifier = ">=2.4.0" }]
 
 [[package]]
 name = "opensearch-protobufs"

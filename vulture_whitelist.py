@@ -1,4 +1,4 @@
-"""Vulture whitelist for opensearch-mcp.
+"""Vulture whitelist for lucerna-mcp.
 
 No known false positives yet — this file exists so the vulture pre-commit
 hook (which takes it as a scan target alongside ".") has a stable target.

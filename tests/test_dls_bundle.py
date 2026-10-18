@@ -9,8 +9,8 @@ from __future__ import annotations
 
 import pytest
 
-from opensearch_mcp.api.api_client_base import OpenSearchApiError
-from opensearch_mcp.mcp.mcp_opensearch import _validate_dls_bundle
+from lucerna_mcp.api.api_client_base import OpenSearchApiError
+from lucerna_mcp.mcp.mcp_opensearch import _validate_dls_bundle
 
 _GOOD_BUNDLE = {
     "version": "1",

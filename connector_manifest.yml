@@ -1,4 +1,4 @@
-connector: opensearch-mcp
+connector: lucerna-mcp
 ontology_source: opensearch
 schema_version: '1'
 resources:
@@ -60,7 +60,7 @@ provenance:
   generated_by: scripts/generate_connector_manifests.py
   generated_at: '2026-08-26T21:05:00Z'
   source_artifacts:
-  - opensearch_mcp/ontology/opensearch.ttl
+  - lucerna_mcp/ontology/opensearch.ttl
   integrity:
     algorithm: urdna2015-sha256
     hash: 823aebab59f98c85591dba715f28b2f9bfbfedd71f85111f611ac0451f1f9642

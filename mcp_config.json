@@ -1,10 +1,10 @@
 {
   "mcpServers": {
-    "opensearch-mcp": {
+    "lucerna-mcp": {
       "command": "uv",
       "args": [
         "run",
-        "opensearch-mcp"
+        "lucerna-mcp"
       ],
       "env": {
         "MCP_TOOL_MODE": "intent",
