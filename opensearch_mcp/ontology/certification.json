@@ -1,5 +1,5 @@
 {
-  "api_version": "graphos.io/v1",
+  "api_version": "arbora.io/v1",
   "artifacts": {
     "connector_manifest.yml": "d1647dd1451154da23d68c09694f6c4de89dec09977b2dde6d4691b7ba8b728b",
     "opensearch_mcp/ontology/fixtures/records.json": "137764f5ccabad6dbabf62edb156e28c0b3609e14e03d0bd41bf3f4241039437",
@@ -16,7 +16,7 @@
     "synthetic_fixture_contract": "not-applicable"
   },
   "compatibility": {
-    "agent_utilities": ">=2.5.0,<3",
+    "agent_connector_sdk": ">=2.5.0,<3",
     "bundle_schema": "2",
     "epistemic_graph": ">=2.27.0,<3"
   },

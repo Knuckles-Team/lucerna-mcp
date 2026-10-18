@@ -2,23 +2,6 @@
 
 ## Layers
 
-```
-opensearch_mcp/
-  api/
-    api_client_base.py        # OpenSearchApiError + _PerCallBearerAuth (per-call bearer)
-    api_client_opensearch.py  # OpenSearchApi: index/search/pipelines/security methods
-  api_client.py                # public Api facade
-  auth.py                       # RFC 8693 delegation, get_client() — the ONLY factory
-  models.py                     # Pydantic request shapes (DLS rendering entry, etc.)
-  mcp/
-    mcp_opensearch.py          # index/search/pipelines/security tools
-  kg_ingest.py                  # reindex-from-KG TRIGGER (:IndexingRun), never the reindex
-  mcp_server.py                  # FastMCP server assembly (register_tool_surface)
-  agent_server.py                # Pydantic-AI A2A agent entry point
-  ontology/opensearch.ttl         # federated OWL classes/links
-  connector_manifest.yml          # resources/actions/sync declaration (DEC-CA-08)
-```
-
 ## The calling-principal invariant, structurally
 
 `api/api_client_base.py`'s `_PerCallBearerAuth` is a `requests.auth.AuthBase`

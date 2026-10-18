@@ -4,12 +4,11 @@ import importlib
 import inspect
 from typing import Any
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __all__: list[str] = []
 
 CORE_MODULES = ["opensearch_mcp.api_client"]
 OPTIONAL_MODULES = {
-    "opensearch_mcp.agent_server": "agent",
     "opensearch_mcp.mcp_server": "mcp",
 }
 
@@ -40,7 +39,6 @@ def _import_module_safely(module_name: str):
 
 _AVAILABILITY_FLAG_MARKERS = {
     "_MCP_AVAILABLE": "mcp_server",
-    "_AGENT_AVAILABLE": "agent_server",
 }
 
 
