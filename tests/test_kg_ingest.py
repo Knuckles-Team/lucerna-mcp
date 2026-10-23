@@ -64,7 +64,7 @@ async def test_record_indexing_run_writes_one_indexing_run_node(ingest):
     assert len(request.records) == 1
     assert not request.relationships
     record = request.records[0]
-    assert record.mapping_reference.endswith("schema_mappings/IndexingRun")
+    assert record.mapping_reference.endswith("mappings/IndexingRun")
     assert record.payload["indexPattern"] == "kg-homelab-document"
     assert record.payload["status"] == "requested"
     assert record.payload["requestedBy"] == "ca-e2e"
