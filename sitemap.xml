@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://knuckles-team.github.io/opensearch-mcp/</loc>
-         <lastmod>2026-10-18</lastmod>
+         <loc>https://knuckles-team.github.io/lucerna-mcp/</loc>
+         <lastmod>2026-10-23</lastmod>
     </url>
     <url>
-         <loc>https://knuckles-team.github.io/opensearch-mcp/architecture/</loc>
-         <lastmod>2026-10-18</lastmod>
+         <loc>https://knuckles-team.github.io/lucerna-mcp/architecture/</loc>
+         <lastmod>2026-10-23</lastmod>
     </url>
     <url>
-         <loc>https://knuckles-team.github.io/opensearch-mcp/configuration/</loc>
-         <lastmod>2026-10-18</lastmod>
+         <loc>https://knuckles-team.github.io/lucerna-mcp/configuration/</loc>
+         <lastmod>2026-10-23</lastmod>
     </url>
 </urlset>
