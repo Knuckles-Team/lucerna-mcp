@@ -1,7 +1,6 @@
 {
   "api_version": "arbora.io/v1",
   "artifacts": {
-    "connector_manifest.yml": "d1647dd1451154da23d68c09694f6c4de89dec09977b2dde6d4691b7ba8b728b",
     "lucerna_mcp/ontology/fixtures/records.json": "137764f5ccabad6dbabf62edb156e28c0b3609e14e03d0bd41bf3f4241039437",
     "lucerna_mcp/ontology/mappings/source.yaml": "7f2a6dd5724c3fa63ee2d50b09eb21d4f6c93829aaa61e9bae7c00d6dcc782ae",
     "lucerna_mcp/ontology/migrations/manifest.json": "6f5aebe42d8765e2c80d137a0a1ac00d8e35c343e0dfbf14f0a40a535cef0483",

@@ -57,5 +57,7 @@
     reindex-request runs — federated into the agent-connector-sdk knowledge-graph
     hub. The index itself is a derived, fully rebuildable projection of the KG
     (DEC-CA-01); this ontology models the search tier's own admin/lifecycle
-    state, not a second copy of the KG's own domain classes.""" ;
-    owl:imports <http://knuckles.team/kg> .
+    state, not a second copy of the KG's own domain classes.""" .
+
+# ontology-codemod R4
+<http://knuckles.team/kg#IndexingRun> rdfs:subClassOf <http://knuckles.team/kg#RunEvent> .
