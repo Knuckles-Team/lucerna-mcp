@@ -1,0 +1,22 @@
+{
+  "schema_version": 2,
+  "spec_id": "CONN-LUCERNA-MCP-CONNECTOR-CONTENT",
+  "owner_repo": "lucerna-mcp",
+  "delivery_state": "VERIFIED",
+  "requirement_ids": [
+    "CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R001"
+  ],
+  "requirements": [
+    {
+      "id": "CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R001",
+      "title": "Default content",
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "a1584158ac24"
+      ],
+      "verified_by": [
+        "tests/test_default_content_surfaces.py:15"
+      ]
+    }
+  ]
+}
