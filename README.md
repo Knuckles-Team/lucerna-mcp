@@ -20,8 +20,6 @@
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/lucerna-mcp)
 ![PyPI - Implementation](https://img.shields.io/pypi/implementation/lucerna-mcp)
 
-*Version: 0.2.0*
-
 > **Documentation** — Installation, deployment, and usage across the API, CLI, MCP,
 > [official documentation](https://knuckles-team.github.io/lucerna-mcp/).
 

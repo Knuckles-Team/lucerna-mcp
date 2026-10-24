@@ -16,4 +16,4 @@ Read the existing specs first. Extend the spec that owns the behavior. Create a 
 
 ## Local specifications
 
-This repository has no local spec yet.
+- [`CONN-LUCERNA-MCP-CONNECTOR-CONTENT`](connector-content/spec.md) — The connector serves its packaged content.
