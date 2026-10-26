@@ -5,3 +5,4 @@ usage, environment variables, and the MCP tool table.
 
 - [Architecture](architecture.md)
 - [Configuration](configuration.md)
+- [Spec-delivery dashboard](spec-delivery/)
