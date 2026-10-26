@@ -57,8 +57,9 @@ owning spec row in the commit trailer.
   endpoint or credential defaults.
 - Bind delivered behavior to a focused test. Generated `specs/*/status.json`
   files come from the shared hooks; never hand-edit them. Keep
-  `skills/**`, `ontology/**`, `connectors/**`, prompts, and both MCP config
-  files in the package-data contract.
+  `skills/**`, `ontology/**`, `connectors/**`, prompts, and the packaged
+  `lucerna_mcp/mcp_config.json` in the package-data contract; the root launcher
+  `mcp_config.json` remains a separate deployment asset.
 - Put `Spec: <ID>` and the assisting-agent trailer on consecutive final
   commit-message lines. Review the complete diff and stage only the reviewed
   paths; do not use `git stash`, `git add -A`, `git add .`, or force-push.
