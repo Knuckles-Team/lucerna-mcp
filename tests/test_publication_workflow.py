@@ -1,5 +1,6 @@
 """Keep shared publication and Pages contracts explicit in this connector."""
 
+# spec: CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R001
 from __future__ import annotations
 
 import json
