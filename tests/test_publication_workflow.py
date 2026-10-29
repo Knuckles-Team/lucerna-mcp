@@ -24,7 +24,6 @@ def _actions_on(workflow: dict):
 
 def test_pages_publishes_spec_dashboard_and_supports_manual_refresh():
 
-
     config = json.loads((ROOT / ".config/spec-dashboard.json").read_text())
     assert config == {
         "version": 1,
@@ -81,6 +80,4 @@ def test_packaged_skill_and_version_lock_are_coherent():
         "setuptools"
     ]["package-data"]
     assert "skills/**" in package_data["lucerna_mcp"]
-    assert (
-        ROOT / "lucerna_mcp/skills/lucerna-mcp-development/SKILL.md"
-    ).is_file()
+    assert (ROOT / "lucerna_mcp/skills/lucerna-mcp-development/SKILL.md").is_file()
