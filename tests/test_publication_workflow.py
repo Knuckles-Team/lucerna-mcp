@@ -59,7 +59,7 @@ def test_development_skill_has_real_delivery_contract_and_actual_tests():
         "lucerna_mcp/auth.py",
         "lucerna_mcp/mcp_server.py",
         "lucerna_mcp/mcp/mcp_opensearch.py",
-        "agent-connector-sdk",
+        "scion-sdk",
         "calling principal",
         "condensed and verbose",
         "lucerna_mcp/ontology/opensearch.ttl",

@@ -22,7 +22,7 @@ Tool-neutral rules for any AI agent or human working in this repository. This bl
 
 ## Tech Stack
 - Python 3.12+
-- agent-connector-sdk >= 2.0.0, <3.0.0
+- scion-sdk >= 2.0.0, <3.0.0
 - Model Context Protocol (MCP)
 - `opensearch-py` (`opensearchpy.OpenSearch`) against the CA-50 search tier,
   `http://localhost:9200` — the only new dependency this package adds.
@@ -30,7 +30,7 @@ Tool-neutral rules for any AI agent or human working in this repository. This bl
 ## Commands
 - `pytest`: Run tests
 - `pre-commit run --all-files`: Lint code
-- `python -m agent_connector_sdk.mcp.check_env_var_drift --check`: env-var drift gate (must be 0)
+- `python -m scion_sdk.mcp.check_env_var_drift --check`: env-var drift gate (must be 0)
 
 ## Domain notes (read before touching `auth.py` or `api/api_client_opensearch.py`)
 
@@ -75,14 +75,14 @@ Tool-neutral rules for any AI agent or human working in this repository. This bl
   `openid_auth_domain`, mapping the token's `roles` claim to OpenSearch
   backend roles — `auth.py` exchanges the MCP-layer caller's token for one
   scoped to the `opensearch` Keycloak client audience via the fleet's shared
-  `agent_connector_sdk.mcp.delegated_auth` (RFC 8693), the same mechanism
+  `scion_sdk.mcp.delegated_auth` (RFC 8693), the same mechanism
   `gitlab-api`/`twenty-mcp` use for their non-fallback delegation path.
 
 ## ActionSpec / DEC-CA-07 status (as of this package's initial build, 2026-08-26)
 `CA-32` (the `ActionSpec` schema extension adding `parameters`/`target_resource`/
 `conflict_policy`/`requires_approval`/`approval_class`) has **not** merged onto
-`agent-connector-sdk` `main` yet — confirmed by reading
-`agent_connector_sdk/knowledge_graph/ontology/connector_manifest.py` (still the
+`scion-sdk` `main` yet — confirmed by reading
+`scion_sdk/knowledge_graph/ontology/connector_manifest.py` (still the
 three-field `{id, name, description}` shape). This package's
 `connector_manifest.yml` therefore carries only the boilerplate two-field
 `actions:` entries every generated manifest gets (`epistemic-answer`,
@@ -98,11 +98,11 @@ manifest declaration is pending.
 `connector_manifest.yml` and the ontology bundle
 (`lucerna_mcp/ontology/{certification.json,shapes/connector.shacl.ttl,
 mappings/source.yaml,fixtures/records.json,migrations/manifest.json}`) were
-generated via `agent-connector-sdk`'s real generator scripts
+generated via `scion-sdk`'s real generator scripts
 (`generate_connector_manifests.py` / `generate_connector_capability_bundles.py`,
 `--unsigned`), same shape as every other connector in the fleet — **not**
 hand-written. Both scripts require the connector to already be a
-**registered** provider (`agent-connector-sdk/deploy/mcp-fleet.registry.yml` for
+**registered** provider (`scion-sdk/deploy/mcp-fleet.registry.yml` for
 the manifest generator's server-alias lookup; `workspace.yml`'s
 `agent-packages/agents` repository list for the capability-bundle generator's
 `_configured_provider_names` check) — `lucerna-mcp` is not registered in
@@ -115,7 +115,7 @@ throwaway copies** of `mcp-fleet.registry.yml` and `workspace.yml` (one added
 `lucerna-mcp` entry each, in `/tmp`, never touching the tracked files) via
 their `--registry`/`--workspace` override parameters, and `--bundled-output`
 pointed at a scratch directory rather than
-`agent_connector_sdk/knowledge_graph/ontology/connector_manifests/` (also never
+`scion_sdk/knowledge_graph/ontology/connector_manifests/` (also never
 touched). The generated artifacts under `lucerna_mcp/ontology/` and
 `connector_manifest.yml` at repo root are therefore the real deterministic
 generator output, reproducible byte-for-byte once the coordinator performs
@@ -126,7 +126,7 @@ the real central registration.
 update_ontology_lock.py` requires `ONTOLOGY_RELEASE_SIGNING_PRIVATE_KEY_REF`
 key custody, not available in this environment — expected, not a defect in
 this package) and `REGISTERED_FEDERATED_IRIS` allowlisting of
-`http://knuckles.team/kg/opensearch` (`agent_connector_sdk/knowledge_graph/core/
+`http://knuckles.team/kg/opensearch` (`scion_sdk/knowledge_graph/core/
 ontology_federation.py`) are both left to the coordinator's central
 registration pass, per this lane's explicit instructions.
 

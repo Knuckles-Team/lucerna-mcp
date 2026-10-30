@@ -13,7 +13,7 @@ description: >-
 license: MIT
 tags: [opensearch, search, kg, ingest, mcp]
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.2.0'
 ---
 # OpenSearch KG Ingestion (Reindex Trigger)

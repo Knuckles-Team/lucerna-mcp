@@ -11,7 +11,7 @@ backwards.
 
 What this module DOES provide, per the lane's Design section: a trigger-only
 ``opensearch_reindex_from_kg`` tool that records an ``:IndexingRun`` node
-(marking the rebuild REQUEST) through ``agent_connector_sdk.ingest`` — the
+(marking the rebuild REQUEST) through ``scion_sdk.ingest`` — the
 generated epistemic-graph ``SourceIngest`` client, not a local ingestion
 helper — and returns immediately with a run id — it never performs the
 reindex itself. CA-24 is the sole owner of actually walking the KG and
@@ -28,7 +28,9 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
-from agent_connector_sdk.ingest import (
+from fastmcp import FastMCP
+from pydantic import Field
+from scion_sdk.ingest import (
     ChangeSet,
     Entity,
     IngestBinding,
@@ -36,8 +38,6 @@ from agent_connector_sdk.ingest import (
     KnowledgeIngest,
     current_ingest,
 )
-from fastmcp import FastMCP
-from pydantic import Field
 
 logger = logging.getLogger("lucerna_mcp.kg")
 
