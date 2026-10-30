@@ -2,8 +2,8 @@
 :IndexingRun node and never performs the reindex itself.
 
 Exercises the real ``ingest_entities``/``record_indexing_run`` seam against a
-fake ``agent_connector_sdk.ingest`` transport (no engine required). The real
-SDK request builder (``agent_connector_sdk.ingest.request.build_request``)
+fake ``scion_sdk.ingest`` transport (no engine required). The real
+SDK request builder (``scion_sdk.ingest.request.build_request``)
 still runs, so a malformed change set is still caught by the SDK's own
 contract, not re-derived here; only the final network commit is faked.
 """
@@ -14,7 +14,7 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
-from agent_connector_sdk.ingest import IngestError, KnowledgeIngest
+from scion_sdk.ingest import IngestError, KnowledgeIngest
 from epistemic_graph.generated.source_ingestion import SourceIngestionRequest
 
 from lucerna_mcp.kg_ingest import _indexing_run_id, record_indexing_run

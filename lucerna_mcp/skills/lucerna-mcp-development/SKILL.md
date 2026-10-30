@@ -10,7 +10,7 @@ license: MIT
 tags: [opensearch, lucerna, development, connector, test, gates]
 tier: repository
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.1.0'
 ---
 
@@ -19,7 +19,7 @@ metadata:
 This repository owns the Lucerna OpenSearch client, action-routed MCP tools,
 connector content, ontology mappings, and source declarations for the CA-50
 search tier. Shared MCP contracts, transports, delegated authentication, and
-source-ingest clients belong to `agent-connector-sdk`; admission, serving, and
+source-ingest clients belong to `scion-sdk`; admission, serving, and
 durable graph state belong to their owning repositories. Read `AGENTS.md`
 before changing code. Keep OpenSearch URLs, tenant identifiers, credentials,
 index names, raw documents, and private responses out of source, logs,

@@ -60,7 +60,7 @@ Pick the extra that matches what the operator want to run:
 
 | Extra | Installs | Use when |
 |-------|----------|----------|
-| `lucerna-mcp[mcp]` | Connector-focused MCP server (`agent-connector-sdk` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator only run the **MCP server** (smallest install / image) |
+| `lucerna-mcp[mcp]` | Connector-focused MCP server (`scion-sdk` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator only run the **MCP server** (smallest install / image) |
 | `lucerna-mcp[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ```bash
@@ -119,7 +119,7 @@ an `AuthBase.__call__` per request, never once at session construction).
 `auth.py`'s `get_client()` is the ONLY client factory in the package. It
 exchanges the calling MCP principal's own token for one scoped to the
 `opensearch` Keycloak client audience via the fleet's shared
-`agent_connector_sdk.mcp.delegated_auth` (RFC 8693 token exchange) — and, unlike
+`scion_sdk.mcp.delegated_auth` (RFC 8693 token exchange) — and, unlike
 `gitlab-api`/`twenty-mcp`'s use of the same helper, it has **no fallback to a
 fixed/service credential**: if delegation isn't enabled or the exchange
 fails, it raises. No tool in `mcp/mcp_opensearch.py` or `kg_ingest.py` accepts
@@ -147,7 +147,7 @@ predicate from scratch.
 | Variable | Example | Description |
 |----------|---------|-------------|
 | `OPENSEARCH_URL` | `http://localhost:9200` |  |
-| `ENABLE_DELEGATION` | `True` | lucerna-mcp has NO fixed/service-credential fallback — every request carries the calling principal's own token, exchanged for one scoped to the audience below. These flags are the fleet-shared MCP OIDC-delegation surface (agent_connector_sdk.mcp.server_factory / delegated_auth), not lucerna-mcp-specific, but MUST be enabled for this package's tools to work at all: |
+| `ENABLE_DELEGATION` | `True` | lucerna-mcp has NO fixed/service-credential fallback — every request carries the calling principal's own token, exchanged for one scoped to the audience below. These flags are the fleet-shared MCP OIDC-delegation surface (scion_sdk.mcp.server_factory / delegated_auth), not lucerna-mcp-specific, but MUST be enabled for this package's tools to work at all: |
 | `OIDC_CONFIG_URL` | `http://localhost:8080/realms/homelab/.well-known/openid-configuration` |  |
 | `OIDC_CLIENT_ID` | — |  |
 | `OIDC_CLIENT_SECRET_REF` | — |  |
@@ -157,7 +157,7 @@ predicate from scratch.
 | `OPENSEARCHTOOL` | `True` |  |
 | `INGESTTOOL` | `True` |  |
 
-#### Inherited agent-connector-sdk variables (apply to every connector)
+#### Inherited scion-sdk variables (apply to every connector)
 
 | Variable | Example | Description |
 |----------|---------|-------------|
@@ -183,20 +183,20 @@ predicate from scratch.
 | `PROVIDER` | `openai` | LLM provider for the agent |
 | `MODEL_ID` | `gpt-4o` | Model id for the agent |
 
-_10 package + 22 inherited variable(s). Auto-generated from `.env.example` + the shared agent-connector-sdk set — do not edit._
+_10 package + 22 inherited variable(s). Auto-generated from `.env.example` + the shared scion-sdk set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 | Variable | Required | Notes |
 |----------|----------|-------|
 | `OPENSEARCH_URL` | recommended | Bare OpenSearch origin. Defaults to `http://localhost:9200`. |
 | `ENABLE_DELEGATION` | ✅ | Must be `True` — this package has no other credential path. |
-| `OIDC_CONFIG_URL` | ✅ | OIDC discovery document URL (shared agent-connector-sdk MCP surface). |
+| `OIDC_CONFIG_URL` | ✅ | OIDC discovery document URL (shared scion-sdk MCP surface). |
 | `OIDC_CLIENT_ID` / `OIDC_CLIENT_SECRET_REF` | ✅ | Confidential client used for the RFC 8693 token exchange. |
 | `OPENSEARCH_KEYCLOAK_CLIENT_ID` | optional | Delegated-token audience. Defaults to `opensearch`. |
 | `OPENSEARCH_TLS_PROFILE` / `OPENSEARCH_TLS_PROFILE_REF` | optional | Named outbound TLS trust policy. |
 | `OPENSEARCHTOOL` | optional | Tool-group toggle (set `False` to disable the index/search/pipelines/security tools). Default `True`. |
 | `INGESTTOOL` | optional | Tool-group toggle for `opensearch_reindex_from_kg`. Default `True`. |
-| `MCP_TOOL_MODE` | optional | `condensed` \| `verbose` \| `both` \| `intent` (inherited from agent-connector-sdk). |
+| `MCP_TOOL_MODE` | optional | `condensed` \| `verbose` \| `both` \| `intent` (inherited from scion-sdk). |
 
 ## MCP Tools
 
@@ -284,15 +284,15 @@ Contributions are welcome! Please ensure code quality by running local checks be
 - Validate type-safety with `mypy .`
 - Ran test suites using `pytest`
 
-<!-- BEGIN agent-connector-sdk-deployment (generated; do not edit between markers) -->
+<!-- BEGIN scion-sdk-deployment (generated; do not edit between markers) -->
 
-## Deploy with `agent-connector-sdk-deployment`
+## Deploy with `scion-sdk-deployment`
 
-Provision this package with the consolidated **`agent-connector-sdk-deployment`**
+Provision this package with the consolidated **`scion-sdk-deployment`**
 workflow. It selects an installed-package, editable-source, or immutable-container
 path; records only runtime secret and TLS-profile references in `AgentConfig`; and
 runs doctor, registration, policy, observability, and rollback gates. Ask your agent
-to **"deploy `lucerna-mcp` with agent-connector-sdk-deployment"**.
+to **"deploy `lucerna-mcp` with scion-sdk-deployment"**.
 
 | Install mode | Command |
 |------|---------|
@@ -303,7 +303,7 @@ The repository embeds no deployment profile, credential value, certificate path,
 environment-specific endpoint. Supply those at runtime through `AgentConfig` and the
 configured secret provider.
 
-<!-- END agent-connector-sdk-deployment -->
+<!-- END scion-sdk-deployment -->
 
 <!-- GOVERNED-CAPABILITY:START -->
 ## Governed capability contract

@@ -13,7 +13,7 @@ description: >-
 license: MIT
 tags: [opensearch, search, index, mcp]
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.2.0'
 ---
 # OpenSearch Index Operations
@@ -53,7 +53,7 @@ fallback (see `lucerna-mcp`'s `AGENTS.md`).
 | Variable | Required | Notes |
 |----------|----------|-------|
 | `OPENSEARCH_URL` | recommended | Bare OpenSearch origin. Defaults to `http://localhost:9200`. |
-| `ENABLE_DELEGATION` / `OIDC_CONFIG_URL` / `OIDC_CLIENT_ID` / `OIDC_CLIENT_SECRET_REF` | ✅ | Shared agent-connector-sdk MCP OIDC-delegation surface — required for ANY tool in this package to authenticate. |
+| `ENABLE_DELEGATION` / `OIDC_CONFIG_URL` / `OIDC_CLIENT_ID` / `OIDC_CLIENT_SECRET_REF` | ✅ | Shared scion-sdk MCP OIDC-delegation surface — required for ANY tool in this package to authenticate. |
 | `OPENSEARCH_KEYCLOAK_CLIENT_ID` | optional | Delegated-token audience. Defaults to `opensearch`. |
 | `OPENSEARCH_TLS_PROFILE` / `OPENSEARCH_TLS_PROFILE_REF` | optional | Named outbound TLS trust policy. |
 
