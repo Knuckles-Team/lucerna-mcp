@@ -1,4 +1,4 @@
-"""Native epistemic-graph ingestion glue for lucerna-mcp — the reindex TRIGGER.
+"""Native medulla ingestion glue for lucerna-mcp — the reindex TRIGGER.
 
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. The record-source twin of
 the egeria/jena/lakekeeper connectors, with one deliberate difference: this
@@ -12,7 +12,7 @@ backwards.
 What this module DOES provide, per the lane's Design section: a trigger-only
 ``opensearch_reindex_from_kg`` tool that records an ``:IndexingRun`` node
 (marking the rebuild REQUEST) through ``scion_sdk.ingest`` — the
-generated epistemic-graph ``SourceIngest`` client, not a local ingestion
+generated medulla ``SourceIngest`` client, not a local ingestion
 helper — and returns immediately with a run id — it never performs the
 reindex itself. CA-24 is the sole owner of actually walking the KG and
 populating OpenSearch; this tool's contract is satisfied entirely by the
