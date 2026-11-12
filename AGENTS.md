@@ -120,7 +120,7 @@ the real central registration.
 update_ontology_lock.py` requires `ONTOLOGY_RELEASE_SIGNING_PRIVATE_KEY_REF`
 key custody, not available in this environment — expected, not a defect in
 this package) and `REGISTERED_FEDERATED_IRIS` allowlisting of
-`http://knuckles.team/kg/opensearch` (`scion_sdk/knowledge_graph/core/
+`https://knuckles-team.github.io/ontology/connector/opensearch` (`scion_sdk/knowledge_graph/core/
 ontology_federation.py`) are both left to the coordinator's central
 registration pass, per this lane's explicit instructions.
 
