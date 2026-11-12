@@ -1,4 +1,4 @@
-"""Search-size cap and k-NN-disabled degrade path, exercised against the real
+"""Search-size cap and the absence of vector search, exercised against the real
 ``OpenSearchApi`` class with its low-level ``opensearchpy`` client mocked out
 (no network) — never against ``auth.get_client()``, per this package's own
 test-only-escape-hatch rule (see ``api/api_client_opensearch.py``)."""
@@ -41,42 +41,20 @@ def test_search_rejects_negative_size_by_flooring_at_zero():
     assert kwargs["body"]["size"] == 0
 
 
-def test_knn_search_translates_plugin_disabled_error_to_named_typed_error():
-    from opensearchpy.exceptions import TransportError
-
+def test_no_vector_search_surface_remains():
     api = _api()
-    api._client = MagicMock()
-    api._client.search.side_effect = TransportError(
-        400,
-        "search_phase_execution_exception",
-        {
-            "error": {
-                "root_cause": [
-                    {
-                        "reason": (
-                            'illegal_state_exception: "KNN plugin is disabled. '
-                            'To enable update knn.plugin.enabled setting to true"'
-                        )
-                    }
-                ]
-            }
-        },
-    )
-
-    with pytest.raises(OpenSearchApiError, match="k-NN plugin is disabled"):
-        api.knn_search("kg-vectors", "embedding", [0.1, 0.2, 0.3], k=5)
+    for name in ("knn_search", "hybrid_search", "knn_plugin_enabled"):
+        assert not hasattr(api, name)
 
 
-def test_knn_search_other_errors_pass_through_as_typed_error_not_knn_message():
-    from opensearchpy.exceptions import NotFoundError
+def test_no_vector_search_tool_is_registered():
+    import inspect
 
-    api = _api()
-    api._client = MagicMock()
-    api._client.search.side_effect = NotFoundError(404, "index_not_found_exception", {})
+    from lucerna_mcp.mcp import mcp_opensearch
 
-    with pytest.raises(OpenSearchApiError) as excinfo:
-        api.knn_search("kg-vectors", "embedding", [0.1], k=5)
-    assert "k-NN plugin is disabled" not in str(excinfo.value)
+    source = inspect.getsource(mcp_opensearch)
+    for name in ("opensearch_knn_search", "opensearch_hybrid_search", "opensearch_knn_plugin_enabled"):
+        assert name not in source
 
 
 def test_create_index_is_idempotent_on_already_exists():

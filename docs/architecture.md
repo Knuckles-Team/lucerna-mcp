@@ -27,18 +27,9 @@ the pre-bundle DLS demonstration accounts (`ca-e2e`/`restricted-viewer`,
 documented in `services/opensearch/AGENTS.md`). It is never imported by
 `auth.py` or by any `mcp/*.py` tool.
 
-## k-NN plugin: disabled, and how that is surfaced
+## Vector search
 
-Per `services/opensearch/AGENTS.md` (CA-50): no AVX2-free OpenSearch k-NN
-build exists upstream, and the homelab's nodes have no AVX2 — so the plugin
-is disabled at the deployment layer (`knn.plugin.enabled: false`). Creating
-an index with a `knn_vector` mapping succeeds (mapping acceptance isn't
-gated), but indexing a document into that field or running a `knn` query
-both fail with `illegal_state_exception: "KNN plugin is disabled..."`.
-`api/api_client_opensearch.py`'s `knn_search`/`hybrid_search` catch that
-specific error text and re-raise a typed `OpenSearchApiError` naming the
-plugin as the cause, rather than letting a bare transport 400/500 surface —
-proven live against the deployed cluster (2.19.6).
+The graph engine holds native vectors, so this connector serves OpenSearch text (BM25) search only and exposes no vector or hybrid tool.
 
 ## DLS bundle application, never authored here
 

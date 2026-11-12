@@ -13,8 +13,8 @@
 # `:ObjectType` classes it indexes rather than owning that data itself. All
 # classes/properties live in the SHARED `:` (kg#) namespace; only the
 # owl:Ontology node gets the per-package IRI. Backs the lucerna-mcp tool
-# surface (opensearch_create_index / opensearch_search / opensearch_knn_search /
-# opensearch_hybrid_search / opensearch_ingest_pipeline / opensearch_read_dls_rules /
+# surface (opensearch_create_index / opensearch_search /
+# opensearch_ingest_pipeline / opensearch_read_dls_rules /
 # opensearch_apply_dls_bundle / opensearch_reindex_from_kg).
 
 # --- classes (owl:Class) ---

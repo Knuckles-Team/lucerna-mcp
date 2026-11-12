@@ -28,19 +28,6 @@ CONTRACTS = (
                 ),
             ),
             ToolStep(
-                tool="lucerna_knn_plugin_enabled",
-                params=(),
-                result=("enabled",),
-                refusals=(
-                    Refusal(
-                        "ACCESS_DENIED", "the credential lacks access to the operation"
-                    ),
-                    Refusal(
-                        "INVALID_ARGUMENT", "the upstream system rejects the input"
-                    ),
-                ),
-            ),
-            ToolStep(
                 tool="opensearch_get_aliases",
                 params=("index",),
                 result=("alias", "index"),
@@ -70,7 +57,7 @@ CONTRACTS = (
     ),
     ToolUseContract(
         task="search-documents",
-        description="Run lexical or hybrid searches as the calling principal.",
+        description="Run lexical searches as the calling principal.",
         steps=(
             ToolStep(
                 tool="opensearch_search",
@@ -88,32 +75,6 @@ CONTRACTS = (
             ToolStep(
                 tool="lucerna_search",
                 params=("index", "query", "size", "_source"),
-                result=("hits",),
-                refusals=(
-                    Refusal(
-                        "ACCESS_DENIED", "the credential lacks access to the operation"
-                    ),
-                    Refusal(
-                        "INVALID_ARGUMENT", "the upstream system rejects the input"
-                    ),
-                ),
-            ),
-            ToolStep(
-                tool="opensearch_hybrid_search",
-                params=("index", "queries", "size"),
-                result=("hits",),
-                refusals=(
-                    Refusal(
-                        "ACCESS_DENIED", "the credential lacks access to the operation"
-                    ),
-                    Refusal(
-                        "INVALID_ARGUMENT", "the upstream system rejects the input"
-                    ),
-                ),
-            ),
-            ToolStep(
-                tool="lucerna_hybrid_search",
-                params=("index", "queries", "size"),
                 result=("hits",),
                 refusals=(
                     Refusal(
@@ -491,7 +452,6 @@ LINKS = (
         task="inspect-search-tier",
         tools=(
             "lucerna_cluster_health",
-            "lucerna_knn_plugin_enabled",
             "opensearch_get_aliases",
             "lucerna_get_aliases",
         ),
@@ -507,8 +467,6 @@ LINKS = (
         tools=(
             "opensearch_search",
             "lucerna_search",
-            "opensearch_hybrid_search",
-            "lucerna_hybrid_search",
         ),
         prompts=("lucerna-mcp-operator", "lucerna-mcp-search-analyst"),
         skills=("opensearch-search",),
@@ -605,7 +563,7 @@ ROLES = (
     ),
     BusinessRole(
         name="search analyst",
-        description="Find indexed knowledge-graph content with lexical and hybrid search.",
+        description="Find indexed knowledge-graph content with lexical search.",
         tasks=("search-documents", "inspect-search-tier"),
     ),
 )
