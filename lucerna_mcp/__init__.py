@@ -83,11 +83,11 @@ def __dir__() -> list[str]:
 
 from scion_sdk.connector import Connector
 
-from lucerna_mcp.api_client import Api
+from lucerna_mcp.api_client import served_api
 from lucerna_mcp.auth import get_client
 
 connector = Connector(
-    api=Api,
+    api=served_api(),
     get_client=get_client,
     tools="lucerna_mcp.mcp_server",
     instructions="Lucerna MCP Server (CA-50 search tier) — index/alias/settings/rollover admin, BM25/kNN/hybrid search always run as the calling principal so document-level security applies, ingest-pipeline admin, DLS-bundle read/apply (never hand-authors a rule — only applies what CA-16/26 render), and a trigger-only reindex-from-KG tool.",

@@ -61,3 +61,4 @@
 
 # ontology-codemod R4
 <http://knuckles.team/kg#IndexingRun> rdfs:subClassOf <http://knuckles.team/kg#RunEvent> .
+<http://knuckles.team/kg#SearchAlias> rdfs:subClassOf <http://knuckles.team/kg#SearchIndex> .

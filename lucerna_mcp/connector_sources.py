@@ -6,7 +6,24 @@ Served live as ``connector://resources``. Regenerate by editing the declarations
 # ruff: noqa: E501
 from __future__ import annotations
 
-SOURCES = ()
+from typing import Any
+
+from scion_sdk.ingest.live_declaration import source_meta
+
+CONNECTOR = "lucerna-mcp"
+
+SOURCES: tuple[Any, ...] = (
+    source_meta(
+        tool="opensearch_get_aliases",
+        source_id="search-aliases",
+        record_type="SearchAlias",
+        id_field="alias",
+        preset={"doc_type": "search_alias", "params_style": "args"},
+        server="lucerna-mcp",
+        text_field="index",
+        title_field="alias",
+    ),
+)
 
 SCHEMA_MAPPINGS = {
     "IndexingRun": {
