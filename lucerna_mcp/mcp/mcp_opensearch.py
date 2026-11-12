@@ -34,13 +34,14 @@ own ``INGESTTOOL`` toggle) — it is a *trigger*, not a search/admin tool.
 
 from __future__ import annotations
 
-from typing import Any, Literal
+from typing import Any
 
 from fastmcp import FastMCP
 from pydantic import Field
 
 from lucerna_mcp.api.api_client_base import OpenSearchApiError
 from lucerna_mcp.auth import get_client
+from lucerna_mcp.knn_gate import knn_enabled
 
 _REQUIRED_RENDERING_FIELDS = ("index_pattern", "role", "dls_query")
 _RECOGNIZED_GOVERNS = {"M1"}
@@ -253,23 +254,25 @@ def register_opensearch_tools(mcp: FastMCP) -> None:
         server-side; this tool never widens or bypasses that filter."""
         return get_client().search(index, query, size=size, _source=source_fields)
 
-    @mcp.tool(tags={"search"})
-    async def opensearch_knn_search(
-        index: str = Field(description="Index containing the knn_vector field."),
-        field: str = Field(description="knn_vector field name."),
-        vector: list[float] = Field(description="Query vector."),
-        k: int = Field(default=10, description="Number of nearest neighbors."),
-        size: int = Field(
-            default=10, description="Max hits to return (capped at 100)."
-        ),
-    ) -> dict[str, Any]:
-        """k-NN vector search. **The k-NN plugin is disabled on this cluster**
-        (pre-AVX2 homelab nodes, `services/opensearch/AGENTS.md`) — this tool
-        exists per this lane's scope but raises a typed, named error rather
-        than a bare 500 when the plugin refuses the query. Use
-        ``opensearch_search`` (BM25) or eg-vector/vector-mcp for vector
-        search instead."""
-        return get_client().knn_search(index, field, vector, k=k, size=size)
+    if knn_enabled():
+
+        @mcp.tool(tags={"search"})
+        async def opensearch_knn_search(
+            index: str = Field(description="Index containing the knn_vector field."),
+            field: str = Field(description="knn_vector field name."),
+            vector: list[float] = Field(description="Query vector."),
+            k: int = Field(default=10, description="Number of nearest neighbors."),
+            size: int = Field(
+                default=10, description="Max hits to return (capped at 100)."
+            ),
+        ) -> dict[str, Any]:
+            """k-NN vector search. **The k-NN plugin is disabled on this cluster**
+            (pre-AVX2 homelab nodes, `services/opensearch/AGENTS.md`) — this tool
+            exists per this lane's scope but raises a typed, named error rather
+            than a bare 500 when the plugin refuses the query. Use
+            ``opensearch_search`` (BM25) or eg-vector/vector-mcp for vector
+            search instead."""
+            return get_client().knn_search(index, field, vector, k=k, size=size)
 
     @mcp.tool(tags={"search"})
     async def opensearch_hybrid_search(
@@ -287,26 +290,24 @@ def register_opensearch_tools(mcp: FastMCP) -> None:
         return get_client().hybrid_search(index, queries, size=size)
 
     # ── pipelines ──────────────────────────────────────────────────────────
-    @mcp.tool(tags={"pipelines", "mutating"})
-    async def opensearch_ingest_pipeline(
+    @mcp.tool(tags={"pipelines"})
+    async def opensearch_ingest_pipeline_get(
         pipeline_id: str = Field(description="Ingest pipeline id."),
-        action: Literal["get", "put"] = Field(
-            default="get", description="'get' to read, 'put' to create/replace."
-        ),
-        body: dict[str, Any] | None = Field(
-            default=None,
-            description="Pipeline definition ({'processors': [...]}) — required for 'put'.",
+    ) -> dict[str, Any]:
+        """Read an ingest pipeline definition."""
+        return get_client().get_ingest_pipeline(pipeline_id)
+
+    @mcp.tool(tags={"pipelines", "mutating"})
+    async def opensearch_ingest_pipeline_put(
+        pipeline_id: str = Field(description="Ingest pipeline id."),
+        body: dict[str, Any] = Field(
+            description="Pipeline definition ({'processors': [...]})."
         ),
     ) -> dict[str, Any]:
-        """Read or define an ingest pipeline."""
-        client = get_client()
-        if action == "get":
-            return client.get_ingest_pipeline(pipeline_id)
+        """Create or replace an ingest pipeline."""
         if not body:
-            raise OpenSearchApiError(
-                "opensearch_ingest_pipeline(action='put') requires 'body'"
-            )
-        return client.put_ingest_pipeline(pipeline_id, body)
+            raise OpenSearchApiError("opensearch_ingest_pipeline_put requires 'body'")
+        return get_client().put_ingest_pipeline(pipeline_id, body)
 
     # ── security / DLS (never hand-authored here) ─────────────────────────
     @mcp.tool(tags={"security"})

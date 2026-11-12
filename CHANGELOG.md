@@ -5,6 +5,14 @@ All notable changes to `lucerna-mcp` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.8] - 2026-11-12
+
+### Changed
+- The connector declares its whole surface: tool-use contracts, links, data location, business roles, operator and role prompts, and a data resource. `SearchAlias` rolls up to a core class.
+- `opensearch_ingest_pipeline` (an `action` router) is replaced by `opensearch_ingest_pipeline_get` and `opensearch_ingest_pipeline_put`.
+- The k-NN search tools (`opensearch_knn_search`, `lucerna_knn_search`) are served only when `LUCERNA_KNN_ENABLED` is true (default false), because the cluster's k-NN plugin is disabled; `lucerna_knn_plugin_enabled` still reports the cluster state.
+- Remove the unresolvable `scion_sdk.prompt_providers` entry point; require `scion-sdk>=0.9.0,<1.0.0`.
+
 ## [0.3.7] - 2026-10-30
 
 ### Changed
