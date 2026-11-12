@@ -33,10 +33,6 @@ homelab's internal CA (`homelab-arpa-ca`) is trusted fleet-wide via the
 at `:9200` (the security plugin refuses to run without it) and the ingress
 re-encrypts rather than offloading to plain HTTP.
 
-## k-NN stays disabled
+## No vector search
 
-Do not set `knn.plugin.enabled: true` anywhere in this package's
-configuration surface, and do not add a tool whose only path requires k-NN.
-The homelab's nodes have no AVX2 and no AVX2-free OpenSearch k-NN build
-exists upstream — see `docs/architecture.md` for how `knn_search`/
-`hybrid_search` degrade instead of assuming the plugin is available.
+The graph engine holds native vectors. Do not add a vector or hybrid tool to this package.

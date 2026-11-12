@@ -52,13 +52,7 @@ Tool-neutral rules for any AI agent or human working in this repository. This bl
   (`ca-e2e` / `restricted-viewer`). It is never referenced by `auth.py` or by
   any `mcp/*.py` tool — if the operator ever see it imported from either, that is a
   security regression, not a convenience.
-- **k-NN is disabled cluster-wide** (pre-AVX2 homelab nodes — no AVX2-free
-  OpenSearch k-NN build exists upstream). `opensearch_knn_search`/
-  `opensearch_hybrid_search` exist per this lane's scope but raise a typed,
-  named `OpenSearchApiError` (not a bare 500) when the plugin refuses the
-  operation — checked live against the deployed cluster (2.19.6): indexing a
-  `knn_vector` document and running a `knn` query both fail with
-  `illegal_state_exception: "KNN plugin is disabled..."`.
+- **No vector search.** The graph engine holds native vectors; this connector serves OpenSearch text (BM25) search only.
 - **`opensearch_apply_dls_bundle` never hand-authors a DLS rule.** It
   validates a caller-supplied CA-16/26-rendered bundle's shape
   (`renderings.opensearch`, `governs: ["M1"]`, `graph`) and applies EXACTLY
@@ -126,7 +120,7 @@ the real central registration.
 update_ontology_lock.py` requires `ONTOLOGY_RELEASE_SIGNING_PRIVATE_KEY_REF`
 key custody, not available in this environment — expected, not a defect in
 this package) and `REGISTERED_FEDERATED_IRIS` allowlisting of
-`http://knuckles.team/kg/opensearch` (`scion_sdk/knowledge_graph/core/
+`https://knuckles-team.github.io/ontology/connector/opensearch` (`scion_sdk/knowledge_graph/core/
 ontology_federation.py`) are both left to the coordinator's central
 registration pass, per this lane's explicit instructions.
 

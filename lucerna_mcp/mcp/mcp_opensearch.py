@@ -23,7 +23,7 @@ Four tool groups, per DEC-CA-08 / this lane's contract (all registered by
 :func:`register_opensearch_tools`, one ``OPENSEARCHTOOL`` env toggle):
   * index      — create/update/alias/settings/rollover/delete (typed
                  ``OntologyAction``s per DEC-CA-07 once ``ActionSpec`` lands)
-  * search     — BM25 / kNN / hybrid, always as the calling principal
+  * search     — BM25 text search, always as the calling principal
   * pipelines  — ingest-pipeline get/put
   * security   — DLS rule read (read-only) + bundle apply (write, gated)
 
@@ -41,7 +41,6 @@ from pydantic import Field
 
 from lucerna_mcp.api.api_client_base import OpenSearchApiError
 from lucerna_mcp.auth import get_client
-from lucerna_mcp.knn_gate import knn_enabled
 
 _REQUIRED_RENDERING_FIELDS = ("index_pattern", "role", "dls_query")
 _RECOGNIZED_GOVERNS = {"M1"}
@@ -253,41 +252,6 @@ def register_opensearch_tools(mcp: FastMCP) -> None:
         mapped to that principal's OpenSearch backend role filters results
         server-side; this tool never widens or bypasses that filter."""
         return get_client().search(index, query, size=size, _source=source_fields)
-
-    if knn_enabled():
-
-        @mcp.tool(tags={"search"})
-        async def opensearch_knn_search(
-            index: str = Field(description="Index containing the knn_vector field."),
-            field: str = Field(description="knn_vector field name."),
-            vector: list[float] = Field(description="Query vector."),
-            k: int = Field(default=10, description="Number of nearest neighbors."),
-            size: int = Field(
-                default=10, description="Max hits to return (capped at 100)."
-            ),
-        ) -> dict[str, Any]:
-            """k-NN vector search. **The k-NN plugin is disabled on this cluster**
-            (pre-AVX2 homelab nodes, `services/opensearch/AGENTS.md`) — this tool
-            exists per this lane's scope but raises a typed, named error rather
-            than a bare 500 when the plugin refuses the query. Use
-            ``opensearch_search`` (BM25) or eg-vector/vector-mcp for vector
-            search instead."""
-            return get_client().knn_search(index, field, vector, k=k, size=size)
-
-    @mcp.tool(tags={"search"})
-    async def opensearch_hybrid_search(
-        index: str = Field(description="Index to search."),
-        queries: list[dict[str, Any]] = Field(
-            description="List of sub-query DSL objects combined by OpenSearch's hybrid query clause."
-        ),
-        size: int = Field(
-            default=10, description="Max hits to return (capped at 100)."
-        ),
-    ) -> dict[str, Any]:
-        """OpenSearch native hybrid (lexical + vector) search. Degrades the
-        same way as ``opensearch_knn_search`` when a sub-query is a k-NN
-        clause and the plugin is disabled."""
-        return get_client().hybrid_search(index, queries, size=size)
 
     # ── pipelines ──────────────────────────────────────────────────────────
     @mcp.tool(tags={"pipelines"})
