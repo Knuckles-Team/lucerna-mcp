@@ -99,6 +99,40 @@ CONTRACTS = (
                 ),
             ),
             ToolStep(
+                tool="opensearch_knn_search",
+                params=("index", "field", "vector", "k", "size"),
+                result=("hits",),
+                refusals=(
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "KNN_PLUGIN_DISABLED",
+                        "the cluster has the k-NN plugin disabled",
+                    ),
+                ),
+            ),
+            ToolStep(
+                tool="lucerna_knn_search",
+                params=("index", "field", "vector", "k", "size"),
+                result=("hits",),
+                refusals=(
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "KNN_PLUGIN_DISABLED",
+                        "the cluster has the k-NN plugin disabled",
+                    ),
+                ),
+            ),
+            ToolStep(
                 tool="opensearch_hybrid_search",
                 params=("index", "queries", "size"),
                 result=("hits",),
@@ -507,6 +541,8 @@ LINKS = (
         tools=(
             "opensearch_search",
             "lucerna_search",
+            "opensearch_knn_search",
+            "lucerna_knn_search",
             "opensearch_hybrid_search",
             "lucerna_hybrid_search",
         ),
