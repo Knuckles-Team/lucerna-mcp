@@ -2,6 +2,7 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix dc: <http://purl.org/dc/terms/> .
 @prefix : <http://knuckles.team/kg#> .
+@prefix core: <https://knuckles-team.github.io/ontology/core#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -21,15 +22,18 @@
 
 :SearchIndex a owl:Class ;
     rdfs:label "Search Index" ;
-    rdfs:comment "One OpenSearch index: a derived, rebuildable projection of KG node/document content (opensearch_create_index / opensearch_update_mapping / opensearch_update_settings)." .
+    rdfs:comment "One OpenSearch index: a derived, rebuildable projection of KG node/document content (opensearch_create_index / opensearch_update_mapping / opensearch_update_settings)." ;
+    rdfs:subClassOf core:Dataset .
 
 :SearchAlias a owl:Class ;
     rdfs:label "Search Alias" ;
-    rdfs:comment "An OpenSearch alias pointing at one or more SearchIndex instances, swapped atomically on rollover (opensearch_manage_alias / opensearch_rollover)." .
+    rdfs:comment "An OpenSearch alias pointing at one or more SearchIndex instances, swapped atomically on rollover (opensearch_manage_alias / opensearch_rollover)." ;
+    rdfs:subClassOf core:DomainEntity .
 
 :IndexingRun a owl:Class ;
     rdfs:label "Indexing Run" ;
-    rdfs:comment "One reindex-from-KG request: a durable record of the ask, not the work itself — CA-24 performs the actual rebuild (opensearch_reindex_from_kg)." .
+    rdfs:comment "One reindex-from-KG request: a durable record of the ask, not the work itself — CA-24 performs the actual rebuild (opensearch_reindex_from_kg)." ;
+    rdfs:subClassOf core:RunEvent .
 
 # --- links (owl:ObjectProperty) ---
 
@@ -58,7 +62,3 @@
     hub. The index itself is a derived, fully rebuildable projection of the KG
     (DEC-CA-01); this ontology models the search tier's own admin/lifecycle
     state, not a second copy of the KG's own domain classes.""" .
-
-# ontology-codemod R4
-<http://knuckles.team/kg#IndexingRun> rdfs:subClassOf <http://knuckles.team/kg#RunEvent> .
-<http://knuckles.team/kg#SearchAlias> rdfs:subClassOf <http://knuckles.team/kg#SearchIndex> .
