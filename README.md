@@ -37,7 +37,7 @@
 ## Overview
 `lucerna-mcp` exposes a standardized interface to the platform's OpenSearch
 deployment (CA-50, `http://localhost:9200`) via the Model Context Protocol —
-index/alias/mapping/settings/rollover admin, BM25/k-NN/hybrid search, ingest
+index/alias/mapping/settings/rollover admin, BM25 text search, ingest
 pipeline admin, and document-level-security (DLS) policy read/apply. A
 trigger-only `opensearch_reindex_from_kg` tool records a rebuild request as an
 `:IndexingRun` node; the actual reindex is CA-24's own CDC-fed indexer.
@@ -49,10 +49,7 @@ ONLY client factory in the package; there is no fallback path. See
 [Architecture](#architecture) and `AGENTS.md` for how this is enforced
 structurally.
 
-**k-NN is disabled cluster-wide** (pre-AVX2 homelab nodes — no AVX2-free
-OpenSearch k-NN build exists upstream). `opensearch_knn_search`/
-`opensearch_hybrid_search` exist per this package's scope but raise a typed,
-named error rather than a bare 500 when the plugin refuses the operation.
+**No vector search.** The graph engine holds native vectors; this package serves OpenSearch text (BM25) search only.
 
 ## Installation
 
@@ -210,8 +207,6 @@ _10 package + 22 inherited variable(s). Auto-generated from `.env.example` + the
 | `opensearch_rollover` | index | Roll a write alias to a new backing index |
 | `opensearch_delete_index` | index | Remove an index |
 | `opensearch_search` | search | BM25 lexical search (capped at 100 hits) |
-| `opensearch_knn_search` | search | k-NN vector search (typed error — plugin disabled) |
-| `opensearch_hybrid_search` | search | Lexical + vector hybrid |
 | `opensearch_ingest_pipeline` | pipelines | Get/put an ingest pipeline |
 | `opensearch_read_dls_rules` | security | Read-only: one role's DLS query |
 | `opensearch_apply_dls_bundle` | security | Validate + apply a CA-16/26-rendered bundle |
@@ -247,11 +242,8 @@ k-NN-disabled degrade path, and the DLS-bundle-never-hand-authored rule).
 | `opensearch_delete_index` | `OPENSEARCHTOOL` | Invoke the delete_index operation. |
 | `opensearch_get_aliases` | `OPENSEARCHTOOL` | Invoke the get_aliases operation. |
 | `opensearch_get_ingest_pipeline` | `OPEN_SEARCH_APITOOL` | Invoke the get_ingest_pipeline operation. |
-| `opensearch_hybrid_search` | `OPENSEARCHTOOL` | OpenSearch's native hybrid (lexical + vector) query compound clause. |
 | `opensearch_ingest_pipeline__get` | `MUTATINGTOOL` | Read or define an ingest pipeline. |
 | `opensearch_ingest_pipeline__put` | `MUTATINGTOOL` | Read or define an ingest pipeline. |
-| `opensearch_knn_plugin_enabled` | `OPEN_SEARCH_APITOOL` | Live check of the k-NN plugin's runtime-enabled flag (never assumed). |
-| `opensearch_knn_search` | `OPENSEARCHTOOL` | Invoke the knn_search operation. |
 | `opensearch_manage_alias` | `OPENSEARCHTOOL` | Apply one or more alias actions (``{"add": {...}}``/``{"remove": {...}}``). |
 | `opensearch_put_ingest_pipeline` | `OPEN_SEARCH_APITOOL` | Invoke the put_ingest_pipeline operation. |
 | `opensearch_read_dls_rules` | `OPENSEARCHTOOL` | Read one OpenSearch security-plugin role's index permissions/DLS query. |

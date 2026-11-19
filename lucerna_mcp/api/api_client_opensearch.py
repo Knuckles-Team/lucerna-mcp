@@ -5,14 +5,7 @@ transport auth is :class:`~lucerna_mcp.api.api_client_base._PerCallBearerAuth`
 — the calling principal's own token, re-minted on every request (see that
 module's docstring for why this is structural rather than conventional).
 
-**k-NN plugin**: disabled cluster-wide (pre-AVX2 homelab nodes — no AVX2-free
-OpenSearch k-NN build exists upstream, `services/opensearch/AGENTS.md`).
-`knn_search`/`hybrid_search` exist per this lane's scope but degrade to a
-typed :class:`OpenSearchApiError` (naming the plugin as the cause) rather
-than a bare 500 when the plugin refuses the query — verified live against
-the deployed cluster (2.19.6): indexing a `knn_vector` document and running a
-`knn` query both fail with `illegal_state_exception: "KNN plugin is
-disabled..."`.
+Vector search is not served here: the graph engine holds native vectors. This client serves text search only.
 
 **Security-plugin admin surface** (DLS role read/apply) has no first-class
 ``opensearchpy`` client namespace — both go through
@@ -41,12 +34,6 @@ logger = logging.getLogger("lucerna_mcp.api")
 __all__ = ["OpenSearchApi", "OpenSearchApiError"]
 
 _MAX_SEARCH_SIZE = 100
-_KNN_DISABLED_MARKERS = ("knn plugin is disabled", "knn.plugin.enabled")
-
-
-def _is_knn_disabled_error(exc: Exception) -> bool:
-    text = str(exc).lower()
-    return any(marker in text for marker in _KNN_DISABLED_MARKERS)
 
 
 class OpenSearchApi:
@@ -121,20 +108,6 @@ class OpenSearchApi:
             return self._client.cluster.health()
         except Exception as exc:  # noqa: BLE001
             raise_for_transport_error(exc, operation="cluster_health")
-
-    def knn_plugin_enabled(self) -> bool:
-        """Live check of the k-NN plugin's runtime-enabled flag (never assumed)."""
-        # `include_defaults` isn't expressible via the high-level client's
-        # settings helper params without extra plumbing; ask the flat path
-        # directly, matching services/opensearch/AGENTS.md's own verification.
-        flat = self._perform(
-            "GET",
-            "/_cluster/settings?include_defaults=true&filter_path=**.knn.plugin.enabled",
-        )
-        try:
-            return str(flat["defaults"]["knn"]["plugin"]["enabled"]).lower() == "true"
-        except (KeyError, TypeError):
-            return False
 
     # ── index admin (typed OntologyActions per DEC-CA-07) ─────────────────
     def create_index(
@@ -228,63 +201,6 @@ class OpenSearchApi:
             return self._client.search(index=index, body=body)
         except Exception as exc:  # noqa: BLE001
             raise_for_transport_error(exc, operation=f"search({index})")
-
-    def knn_search(
-        self,
-        index: str,
-        field: str,
-        vector: list[float],
-        k: int = 10,
-        size: int = 10,
-    ) -> dict[str, Any]:
-        capped = min(max(int(size), 0), _MAX_SEARCH_SIZE)
-        body = {
-            "size": capped,
-            "query": {"knn": {field: {"vector": vector, "k": k}}},
-        }
-        try:
-            return self._client.search(index=index, body=body)
-        except Exception as exc:  # noqa: BLE001
-            if _is_knn_disabled_error(exc):
-                raise OpenSearchApiError(
-                    "k-NN plugin is disabled on this cluster (pre-AVX2 homelab "
-                    "nodes — no AVX2-free k-NN build exists upstream, "
-                    "services/opensearch/AGENTS.md). opensearch_knn_search cannot "
-                    "run here; use opensearch_search (BM25) or eg-vector/vector-mcp "
-                    "for vector search instead.",
-                    status_code=getattr(exc, "status_code", None),
-                ) from exc
-            raise_for_transport_error(exc, operation=f"knn_search({index})")
-
-    def hybrid_search(
-        self,
-        index: str,
-        queries: list[dict[str, Any]],
-        size: int = 10,
-    ) -> dict[str, Any]:
-        """OpenSearch's native hybrid (lexical + vector) query compound clause.
-
-        Degrades the same way as :meth:`knn_search` when any sub-query is a
-        ``knn`` clause and the plugin is disabled — never a bare 500.
-        """
-        capped = min(max(int(size), 0), _MAX_SEARCH_SIZE)
-        body = {"size": capped, "query": {"hybrid": {"queries": queries}}}
-        try:
-            return self._client.search(
-                index=index,
-                body=body,
-                params={"search_pipeline": "hybrid-search-pipeline"},
-            )
-        except Exception as exc:  # noqa: BLE001
-            if _is_knn_disabled_error(exc):
-                raise OpenSearchApiError(
-                    "hybrid search includes a k-NN clause and the k-NN plugin is "
-                    "disabled on this cluster (pre-AVX2 homelab nodes). Run a "
-                    "lexical-only opensearch_search instead, or drop the vector "
-                    "sub-query.",
-                    status_code=getattr(exc, "status_code", None),
-                ) from exc
-            raise_for_transport_error(exc, operation=f"hybrid_search({index})")
 
     # ── ingest pipelines ───────────────────────────────────────────────────
     def put_ingest_pipeline(

@@ -1,8 +1,8 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix core: <https://knuckles-team.github.io/ontology/core#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix dc: <http://purl.org/dc/terms/> .
-@prefix : <http://knuckles.team/kg#> .
-@prefix core: <https://knuckles-team.github.io/ontology/core#> .
+@prefix : <https://knuckles-team.github.io/ontology/connector/opensearch#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -11,29 +11,29 @@
 # lucerna-mcp tool surface: indices, their aliases, and reindex-request runs.
 # This tier is a DERIVED PROJECTION of the KG (DEC-CA-01) — never a source of
 # truth in its own right — so `:SearchIndex` links outward to the external
-# `:ObjectType` classes it indexes rather than owning that data itself. All
-# classes/properties live in the SHARED `:` (kg#) namespace; only the
-# owl:Ontology node gets the per-package IRI. Backs the lucerna-mcp tool
-# surface (opensearch_create_index / opensearch_search / opensearch_knn_search /
-# opensearch_hybrid_search / opensearch_ingest_pipeline / opensearch_read_dls_rules /
+# business object types it indexes rather than owning that data itself. The
+# classes and properties live in the `:` connector namespace and each class
+# subclasses a medulla core class (`core:`). Backs the lucerna-mcp tool
+# surface (opensearch_create_index / opensearch_search /
+# opensearch_ingest_pipeline / opensearch_read_dls_rules /
 # opensearch_apply_dls_bundle / opensearch_reindex_from_kg).
 
 # --- classes (owl:Class) ---
 
 :SearchIndex a owl:Class ;
+    rdfs:subClassOf core:SearchIndex ;
     rdfs:label "Search Index" ;
-    rdfs:comment "One OpenSearch index: a derived, rebuildable projection of KG node/document content (opensearch_create_index / opensearch_update_mapping / opensearch_update_settings)." ;
-    rdfs:subClassOf core:Dataset .
+    rdfs:comment "One OpenSearch index: a derived, rebuildable projection of KG node/document content (opensearch_create_index / opensearch_update_mapping / opensearch_update_settings)." .
 
 :SearchAlias a owl:Class ;
+    rdfs:subClassOf core:IndexAlias ;
     rdfs:label "Search Alias" ;
-    rdfs:comment "An OpenSearch alias pointing at one or more SearchIndex instances, swapped atomically on rollover (opensearch_manage_alias / opensearch_rollover)." ;
-    rdfs:subClassOf core:DomainEntity .
+    rdfs:comment "An OpenSearch alias pointing at one or more SearchIndex instances, swapped atomically on rollover (opensearch_manage_alias / opensearch_rollover)." .
 
 :IndexingRun a owl:Class ;
+    rdfs:subClassOf core:RunEvent ;
     rdfs:label "Indexing Run" ;
-    rdfs:comment "One reindex-from-KG request: a durable record of the ask, not the work itself — CA-24 performs the actual rebuild (opensearch_reindex_from_kg)." ;
-    rdfs:subClassOf core:RunEvent .
+    rdfs:comment "One reindex-from-KG request: a durable record of the ask, not the work itself — CA-24 performs the actual rebuild (opensearch_reindex_from_kg)." .
 
 # --- links (owl:ObjectProperty) ---
 
@@ -41,7 +41,7 @@
     rdfs:label "indexes" ;
     rdfs:comment "Links a SearchIndex to the external :ObjectType (a KG node class) it is a derived projection of." ;
     rdfs:domain :SearchIndex ;
-    rdfs:range :ObjectType .
+    rdfs:range core:BusinessObjectType .
 
 :aliasOf a owl:ObjectProperty ;
     rdfs:label "alias of" ;
@@ -55,7 +55,7 @@
     rdfs:domain :IndexingRun ;
     rdfs:range :SearchIndex .
 
-<http://knuckles.team/kg/opensearch> a owl:Ontology ;
+<https://knuckles-team.github.io/ontology/connector/opensearch> a owl:Ontology ;
     rdfs:label "OpenSearch Ontology" ;
     rdfs:comment """OpenSearch search-tier topology — indices, aliases, and
     reindex-request runs — federated into the scion-sdk knowledge-graph

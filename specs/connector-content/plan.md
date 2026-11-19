@@ -54,6 +54,7 @@ The repository pre-commit hooks apply: `ruff-format`, `connector-standard`, `sec
 
 1. `CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R001`: the scion_sdk.connector entry point lucerna-mcp in pyproject.toml resolves to lucerna_mcp/__init__.py::connector (line 89), which the lucerna-mcp console script (scion_sdk.cli:serve) serves; packaged content lives in lucerna_mcp/skills and lucerna_mcp/ontology, and the scion_sdk.prompt_providers entry point names lucerna_mcp.prompts.
 2. `CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R002`: the scion_sdk.connector entry point lucerna-mcp resolves to lucerna_mcp/__init__.py::connector, which serves lucerna_mcp/ontology/opensearch.ttl, lucerna_mcp/prompts and the declarations of lucerna_mcp/connector_contracts.py.
+3. `CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R003`: the lucerna-mcp console script serves lucerna_mcp/mcp/mcp_opensearch.py, which registers `opensearch_search` and calls lucerna_mcp/api/api_client_opensearch.py::OpenSearchApi.search.
 
 ## Cross-repo seams
 

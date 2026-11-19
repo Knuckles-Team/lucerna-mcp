@@ -2,7 +2,7 @@
 name: opensearch-search
 skill_type: skill
 description: >-
-  Run BM25, k-NN, or hybrid queries against OpenSearch (CA-50 search tier)
+  Run BM25 text queries against OpenSearch (CA-50 search tier)
   via the lucerna-mcp MCP server's search tool group, and inspect/apply
   document-level-security (DLS) policy — always as the calling principal, so
   DLS applies per-request; this package never constructs an admin/service-
@@ -29,11 +29,6 @@ leaks the object's existence.
 
 ## When to use
 - Lexical (BM25) search over an index (`opensearch_search`).
-- Vector or hybrid search (`opensearch_knn_search`/`opensearch_hybrid_search`)
-  — **note: the k-NN plugin is disabled on this cluster** (pre-AVX2 homelab
-  nodes); both tools raise a typed, named error rather than a bare 500 when
-  the plugin refuses the operation. Use `opensearch_search` (BM25) or
-  eg-vector/vector-mcp for vector search instead.
 - Read a security-plugin role's current DLS query (`opensearch_read_dls_rules`).
 - Apply a CA-16/26-rendered policy bundle's OpenSearch renderings
   (`opensearch_apply_dls_bundle`) — this skill NEVER hand-authors a DLS rule;
@@ -63,8 +58,6 @@ identity is what determines what comes back.
 | Tool | Purpose |
 |------|---------|
 | `opensearch_search` | BM25 lexical search, capped at 100 hits |
-| `opensearch_knn_search` | k-NN vector search (typed error — plugin disabled) |
-| `opensearch_hybrid_search` | Lexical + vector hybrid (typed error if a knn clause is present and the plugin is disabled) |
 | `opensearch_read_dls_rules` | Read-only: one role's DLS query |
 | `opensearch_apply_dls_bundle` | Validate + apply a CA-16/26-rendered bundle's `renderings.opensearch` entries |
 

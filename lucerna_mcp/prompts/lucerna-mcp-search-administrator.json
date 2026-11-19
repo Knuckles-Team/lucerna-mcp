@@ -22,7 +22,6 @@
       "lucerna_delete_index",
       "lucerna_get_aliases",
       "lucerna_get_ingest_pipeline",
-      "lucerna_knn_plugin_enabled",
       "lucerna_manage_alias",
       "lucerna_put_ingest_pipeline",
       "lucerna_read_dls_rules",

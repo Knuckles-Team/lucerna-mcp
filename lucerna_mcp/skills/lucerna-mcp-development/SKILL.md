@@ -40,7 +40,7 @@ owning spec row in the commit trailer.
   transport, graph-write path, or parallel policy.
 - Preserve the OpenSearch API boundary in `lucerna_mcp/api_client.py` and
   `lucerna_mcp/api/`, including the index, alias, settings, rollover, BM25,
-  kNN, hybrid-search, ingest-pipeline, DLS-bundle, and trigger-only KG
+  ingest-pipeline, DLS-bundle, and trigger-only KG
   operations. Keep `lucerna_mcp/ontology/opensearch.ttl`,
   `lucerna_mcp/ontology/mappings/source.yaml`, and connector-source metadata
   authoritative for ontology and source mappings.
