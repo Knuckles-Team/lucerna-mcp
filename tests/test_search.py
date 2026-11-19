@@ -41,12 +41,14 @@ def test_search_rejects_negative_size_by_flooring_at_zero():
     assert kwargs["body"]["size"] == 0
 
 
+@pytest.mark.spec("CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R003")
 def test_no_vector_search_surface_remains():
     api = _api()
     for name in ("knn_search", "hybrid_search", "knn_plugin_enabled"):
         assert not hasattr(api, name)
 
 
+@pytest.mark.spec("CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R003")
 def test_no_vector_search_tool_is_registered():
     import inspect
 

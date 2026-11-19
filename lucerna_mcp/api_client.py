@@ -9,4 +9,3 @@ class Api(OpenSearchApi):
     """Authenticated OpenSearch client — always the calling principal's token."""
 
     pass
-
