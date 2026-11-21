@@ -40,6 +40,14 @@ The graph engine holds native vectors, so the search tier serves text (BM25) sea
 
 1. **Given** the connector is built from the default branch, **When** the behaviour of row `CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R003` (text search only) is exercised, **Then** no vector, hybrid or k-NN plugin tool or client method remains.
 
+### User Story 4 - The pack extends only the core ontology (Priority: P1)
+
+The fleet operator and the engine rely on this behaviour of ``: its pack adds terms under the core ontology and declares no second copy of a core term. It is proven independently of the other stories.
+
+**Acceptance Scenarios**:
+
+1. **Given** the `` connector built from the default branch, **When** `tests/test_ontology_extends_core.py::test_pack_declares_no_core_term` runs, **Then** the served Turtle declares none of the listed core terms.
+
 ### Edge Cases
 
 - If `CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R001` is not met, its proving test fails: default content.
@@ -51,12 +59,14 @@ The graph engine holds native vectors, so the search tier serves text (BM25) sea
 - **FR-001**: Default content. Rows: `CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R001`.
 - **FR-002**: Surface completeness. Rows: `CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R002`.
 - **FR-003**: Text search only. Rows: `CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R003`.
+- **FR-004**: The pack extends only the core ontology. Rows: `CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R004`.
 
 ## Success Criteria
 
 - **SC-001**: `resources/list` includes `skill://` and `ontology://`; `prompts/list` includes each packaged prompt. Rows: `CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R001`.
 - **SC-002**: The surface audit reports no gap for the ontology, contracts, links and prompts. Rows: `CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R002`.
 - **SC-003**: No vector, hybrid or k-NN plugin tool or client method is served. Rows: `CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R003`.
+- **SC-004**: The served Turtle declares none of the listed core terms. Rows: `CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R004`.
 
 ## Assumptions
 
@@ -70,3 +80,4 @@ The graph engine holds native vectors, so the search tier serves text (BM25) sea
 | FR-001 | `CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R001` | [plan.md](plan.md) | T-001 | [test-spec.md](test-spec.md) |
 | FR-002 | `CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R002` | [plan.md](plan.md) | T-002 | [test-spec.md](test-spec.md) |
 | FR-003 | `CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R003` | [plan.md](plan.md) | T-003 | [test-spec.md](test-spec.md) |
+| FR-004 | `CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R004` | plan.md Production caller chain | T-004 | tests/test_ontology_extends_core.py::test_pack_declares_no_core_term |

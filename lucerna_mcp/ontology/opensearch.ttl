@@ -10,7 +10,7 @@
 # OpenSearch ontology — models the search tier (CA-50, DEC-CA-09) fronted by the
 # lucerna-mcp tool surface: indices, their aliases, and reindex-request runs.
 # This tier is a DERIVED PROJECTION of the KG (DEC-CA-01) — never a source of
-# truth in its own right — so `:SearchIndex` links outward to the external
+# truth in its own right — so `core:SearchIndex` links outward to the external
 # business object types it indexes rather than owning that data itself. The
 # classes and properties live in the `:` connector namespace and each class
 # subclasses a medulla core class (`core:`). Backs the lucerna-mcp tool
@@ -20,40 +20,24 @@
 
 # --- classes (owl:Class) ---
 
-:SearchIndex a owl:Class ;
-    rdfs:subClassOf core:SearchIndex ;
-    rdfs:label "Search Index" ;
-    rdfs:comment "One OpenSearch index: a derived, rebuildable projection of KG node/document content (opensearch_create_index / opensearch_update_mapping / opensearch_update_settings)." .
-
 :SearchAlias a owl:Class ;
     rdfs:subClassOf core:IndexAlias ;
     rdfs:label "Search Alias" ;
     rdfs:comment "An OpenSearch alias pointing at one or more SearchIndex instances, swapped atomically on rollover (opensearch_manage_alias / opensearch_rollover)." .
-
-:IndexingRun a owl:Class ;
-    rdfs:subClassOf core:RunEvent ;
-    rdfs:label "Indexing Run" ;
-    rdfs:comment "One reindex-from-KG request: a durable record of the ask, not the work itself — CA-24 performs the actual rebuild (opensearch_reindex_from_kg)." .
 
 # --- links (owl:ObjectProperty) ---
 
 :indexes a owl:ObjectProperty ;
     rdfs:label "indexes" ;
     rdfs:comment "Links a SearchIndex to the external :ObjectType (a KG node class) it is a derived projection of." ;
-    rdfs:domain :SearchIndex ;
+    rdfs:domain core:SearchIndex ;
     rdfs:range core:BusinessObjectType .
-
-:aliasOf a owl:ObjectProperty ;
-    rdfs:label "alias of" ;
-    rdfs:comment "Links a SearchAlias to the SearchIndex it currently resolves to." ;
-    rdfs:domain :SearchAlias ;
-    rdfs:range :SearchIndex .
 
 :rebuildsIndex a owl:ObjectProperty ;
     rdfs:label "rebuilds index" ;
     rdfs:comment "Links an IndexingRun to the SearchIndex (or index-pattern) its reindex request targets." ;
-    rdfs:domain :IndexingRun ;
-    rdfs:range :SearchIndex .
+    rdfs:domain core:IndexingRun ;
+    rdfs:range core:SearchIndex .
 
 <https://knuckles-team.github.io/ontology/connector/opensearch> a owl:Ontology ;
     rdfs:label "OpenSearch Ontology" ;

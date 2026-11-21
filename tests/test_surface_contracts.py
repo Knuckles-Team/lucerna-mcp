@@ -18,7 +18,7 @@ def test_every_ontology_class_rolls_up_to_core() -> None:
     text = (PACKAGE / "ontology" / "opensearch.ttl").read_text(encoding="utf-8")
     assert CORE_PREFIX in text and "owl:imports" not in text
     blocks = re.findall(r"^:(\w+) a owl:Class ;(.*?) \.$", text, re.S | re.M)
-    assert {name for name, _ in blocks} == {"SearchIndex", "SearchAlias", "IndexingRun"}
+    assert {name for name, _ in blocks} == {"SearchAlias"}
     for name, body in blocks:
         assert re.search(r"rdfs:subClassOf core:\w+", body), name
 
