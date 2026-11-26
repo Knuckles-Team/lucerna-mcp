@@ -64,6 +64,22 @@ owning spec row in the commit trailer.
   commit-message lines. Review the complete diff and stage only the reviewed
   paths; do not use `git stash`, `git add -A`, `git add .`, or force-push.
 
+## Steps
+
+1. Find the owning spec row with `git grep -n "<term>" -- specs`. Verify a row id such as `CONN-LUCERNA-MCP-CONNECTOR-CONTENT-R001` matches the change.
+2. Edit the existing module named in the rules above instead of adding a parallel path. Verify with `git diff --stat` that only intended paths changed.
+3. Run the focused tests, for example `uv run --locked --extra test pytest tests/test_search.py tests/test_startup.py -q`. Verify they pass without live OpenSearch access.
+4. Run `uvx pre-commit run --all-files`. Verify every hook reports Passed.
+5. Stage only reviewed paths with `git add -- <path>` and commit with `Spec: <ID>` in the final paragraph. Verify `git diff --cached --name-status` lists only those paths.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| `uv sync --locked` fails | `uv.lock` out of step with `pyproject.toml` | Run `uv lock`, review the lock diff, and rerun `uv sync --locked` |
+| A hook rewrites files | Formatting or spelling gate fixed them | Review `git diff`, stage the fixed paths with `git add -- <path>`, and commit again |
+| Test needs a live endpoint | The test bypasses the fakes under `tests/` | Replace the live call with the existing fake client fixture |
+
 ## Setup and gates
 
 Use the pinned environment and shared gates from the checkout root:
