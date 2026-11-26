@@ -21,18 +21,10 @@
 ![PyPI - Implementation](https://img.shields.io/pypi/implementation/lucerna-mcp)
 
 > **Documentation** — Installation, deployment, and usage across the API, CLI, MCP,
+> and A2A agent interfaces are maintained in the
 > [official documentation](https://knuckles-team.github.io/lucerna-mcp/).
 
 ---
-
-## Table of Contents
-- [Overview](#overview)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Architecture](#architecture)
-- [Environment Variables](#environment-variables)
-- [MCP Tools](#mcp-tools)
-- [Documentation](#documentation)
 
 ## Overview
 `lucerna-mcp` exposes a standardized interface to the platform's OpenSearch
@@ -51,89 +43,68 @@ structurally.
 
 **No vector search.** The graph engine holds native vectors; this package serves OpenSearch text (BM25) search only.
 
-## Installation
+---
 
-Pick the extra that matches what the operator want to run:
+## MCP
 
-| Extra | Installs | Use when |
-|-------|----------|----------|
-| `lucerna-mcp[mcp]` | Connector-focused MCP server (`scion-sdk` — FastMCP/FastAPI + `medulla`) | The operator only run the **MCP server** (smallest install / image) |
-| `lucerna-mcp[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
+### MCP Tools
 
-```bash
-uv pip install "lucerna-mcp[mcp]"
-```
+| Tool | Group | Purpose |
+|------|-------|---------|
+| `opensearch_create_index` | index | Create an index (idempotent) |
+| `opensearch_update_mapping` | index | Merge field mappings |
+| `opensearch_manage_alias` | index | Add/remove/swap aliases |
+| `opensearch_get_aliases` | index | Read-only alias inspection |
+| `opensearch_update_settings` | index | Update dynamic index settings |
+| `opensearch_rollover` | index | Roll a write alias to a new backing index |
+| `opensearch_delete_index` | index | Remove an index |
+| `opensearch_search` | search | BM25 lexical search (capped at 100 hits) |
+| `opensearch_ingest_pipeline` | pipelines | Get/put an ingest pipeline |
+| `opensearch_read_dls_rules` | security | Read-only: one role's DLS query |
+| `opensearch_apply_dls_bundle` | security | Validate + apply a CA-16/26-rendered bundle |
+| `opensearch_reindex_from_kg` | ingest | Trigger-only: records an `:IndexingRun` node |
 
-### Container images (`:mcp`)
+### Available MCP Tools
 
-One multi-stage `docker/Dockerfile` builds the MCP-only image (`--target mcp`):
+<!-- MCP-TOOLS-TABLE:START -->
 
-```bash
-docker build --target mcp   -t lucerna-mcp:mcp    .
-```
+#### Condensed action-routed tools (`MCP_TOOL_MODE=condensed`)
 
-## Usage
-Run the MCP server directly:
-```bash
-python -m lucerna_mcp
-```
+| MCP Tool | Toggle Env Var | Description |
+|----------|----------------|-------------|
+| `opensearch_apply_dls_bundle` | `OPENSEARCHTOOL` | Apply a CA-16/26-rendered policy bundle's OpenSearch renderings. |
+| `opensearch_ingest_pipeline` | `OPENSEARCHTOOL` | Read or define an ingest pipeline. |
+| `opensearch_reindex_from_kg` | `INGESTTOOL` | Request a reindex of ``index_pattern`` from the KG's current state. |
 
-### MCP Configuration Example (stdio)
+#### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)
 
-```json
-{
-  "mcpServers": {
-    "lucerna-mcp": {
-      "command": "uv",
-      "args": ["run", "lucerna-mcp"],
-      "env": {
-        "MCP_TOOL_MODE": "intent",
-        "OPENSEARCH_URL": "http://localhost:9200",
-        "OPENSEARCHTOOL": "True",
-        "INGESTTOOL": "True",
-        "ENABLE_DELEGATION": "True",
-        "OIDC_CONFIG_URL": "http://localhost:8080/realms/homelab/.well-known/openid-configuration",
-        "OIDC_CLIENT_ID": "",
-        "OIDC_CLIENT_SECRET_REF": "",
-        "OPENSEARCH_KEYCLOAK_CLIENT_ID": "opensearch"
-      }
-    }
-  }
-}
-```
+<details>
+<summary>18 per-operation tools — one per public API method (click to expand)</summary>
 
-## Architecture
+| MCP Tool | Toggle Env Var | Description |
+|----------|----------------|-------------|
+| `opensearch_apply_dls_bundle_rendering` | `OPEN_SEARCH_APITOOL` | Apply ONE already-validated ``renderings.opensearch`` entry. |
+| `opensearch_cluster_health` | `OPEN_SEARCH_APITOOL` | Invoke the cluster_health operation. |
+| `opensearch_create_index` | `OPENSEARCHTOOL` | Invoke the create_index operation. |
+| `opensearch_delete_index` | `OPENSEARCHTOOL` | Invoke the delete_index operation. |
+| `opensearch_get_aliases` | `OPENSEARCHTOOL` | Invoke the get_aliases operation. |
+| `opensearch_get_ingest_pipeline` | `OPEN_SEARCH_APITOOL` | Invoke the get_ingest_pipeline operation. |
+| `opensearch_ingest_pipeline__get` | `MUTATINGTOOL` | Read or define an ingest pipeline. |
+| `opensearch_ingest_pipeline__put` | `MUTATINGTOOL` | Read or define an ingest pipeline. |
+| `opensearch_manage_alias` | `OPENSEARCHTOOL` | Apply one or more alias actions (``{"add": {...}}``/``{"remove": {...}}``). |
+| `opensearch_put_ingest_pipeline` | `OPEN_SEARCH_APITOOL` | Invoke the put_ingest_pipeline operation. |
+| `opensearch_read_dls_rules` | `OPENSEARCHTOOL` | Read one OpenSearch security-plugin role's index permissions/DLS query. |
+| `opensearch_rollover` | `OPENSEARCHTOOL` | Invoke the rollover operation. |
+| `opensearch_search` | `OPENSEARCHTOOL` | Invoke the search operation. |
+| `opensearch_update_mapping` | `OPENSEARCHTOOL` | Invoke the update_mapping operation. |
+| `opensearch_update_settings` | `OPENSEARCHTOOL` | Invoke the update_settings operation. |
 
-`api/api_client_opensearch.py`'s `OpenSearchApi` wraps `opensearchpy.OpenSearch`
-directly (the fleet's one new dependency this package adds). Its transport
-auth is `api/api_client_base.py`'s `_PerCallBearerAuth` — a
-`requests.auth.AuthBase` callable that `opensearchpy`'s
-`RequestsHttpConnection` invokes fresh on EVERY outbound request (checked
-against opensearch-py 3.2.0's own source: `RequestsHttpConnection.__init__`
-assigns `http_auth` directly to `requests.Session.auth`, and `requests` calls
-an `AuthBase.__call__` per request, never once at session construction).
+</details>
 
-`auth.py`'s `get_client()` is the ONLY client factory in the package. It
-exchanges the calling MCP principal's own token for one scoped to the
-`opensearch` Keycloak client audience via the fleet's shared
-`scion_sdk.mcp.delegated_auth` (RFC 8693 token exchange) — and, unlike
-`gitlab-api`/`twenty-mcp`'s use of the same helper, it has **no fallback to a
-fixed/service credential**: if delegation isn't enabled or the exchange
-fails, it raises. No tool in `mcp/mcp_opensearch.py` or `kg_ingest.py` accepts
-a credential override parameter of any kind.
+_3 action-routed tool(s) · 18 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (**`intent` default** — the six verb-tools, granular set loaded on demand · `condensed` action-routed · `verbose` 1:1 · `both`). Auto-generated — do not edit._
+<!-- MCP-TOOLS-TABLE:END -->
 
-`mcp/mcp_opensearch.py` registers four tool groups (`index`, `search`,
-`pipelines`, `security`) via one `register_tool_surface(...)` call in
-`mcp_server.py`, matching the fleet's one-registration-call convention.
-`kg_ingest.py` registers the fifth group (`opensearch_reindex_from_kg`,
-tagged `ingest`/`kg`/`kg_ingest`) — a trigger-only tool that records an
-`:IndexingRun` node through the required `native_ingest` (Wire-First)
-authority; it never performs the reindex itself (CA-24 does).
-
-`opensearch_apply_dls_bundle` validates a caller-supplied DEC-CA-04 policy
-bundle's shape (`renderings.opensearch`, `governs: ["M1"]`, `graph`) before
-applying it — this package contains no code path that builds a DLS
-predicate from scratch.
+---
 
 ## Environment Variables
 
@@ -195,67 +166,102 @@ _10 package + 22 inherited variable(s). Auto-generated from `.env.example` + the
 | `INGESTTOOL` | optional | Tool-group toggle for `opensearch_reindex_from_kg`. Default `True`. |
 | `MCP_TOOL_MODE` | optional | `condensed` \| `verbose` \| `both` \| `intent` (inherited from scion-sdk). |
 
-## MCP Tools
+---
 
-| Tool | Group | Purpose |
-|------|-------|---------|
-| `opensearch_create_index` | index | Create an index (idempotent) |
-| `opensearch_update_mapping` | index | Merge field mappings |
-| `opensearch_manage_alias` | index | Add/remove/swap aliases |
-| `opensearch_get_aliases` | index | Read-only alias inspection |
-| `opensearch_update_settings` | index | Update dynamic index settings |
-| `opensearch_rollover` | index | Roll a write alias to a new backing index |
-| `opensearch_delete_index` | index | Remove an index |
-| `opensearch_search` | search | BM25 lexical search (capped at 100 hits) |
-| `opensearch_ingest_pipeline` | pipelines | Get/put an ingest pipeline |
-| `opensearch_read_dls_rules` | security | Read-only: one role's DLS query |
-| `opensearch_apply_dls_bundle` | security | Validate + apply a CA-16/26-rendered bundle |
-| `opensearch_reindex_from_kg` | ingest | Trigger-only: records an `:IndexingRun` node |
+## Installation
+
+Pick the extra that matches what the operator want to run:
+
+| Extra | Installs | Use when |
+|-------|----------|----------|
+| `lucerna-mcp[mcp]` | Connector-focused MCP server (`scion-sdk` — FastMCP/FastAPI + `medulla`) | The operator only run the **MCP server** (smallest install / image) |
+| `lucerna-mcp[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
+
+```bash
+uv pip install "lucerna-mcp[mcp]"
+```
+
+### Container images (`:mcp`)
+
+One multi-stage `docker/Dockerfile` builds the MCP-only image (`--target mcp`):
+
+```bash
+docker build --target mcp   -t lucerna-mcp:mcp    .
+```
+
+---
+
+## Usage
+Run the MCP server directly:
+```bash
+python -m lucerna_mcp
+```
+
+### MCP Configuration Example (stdio)
+
+```json
+{
+  "mcpServers": {
+    "lucerna-mcp": {
+      "command": "uv",
+      "args": ["run", "lucerna-mcp"],
+      "env": {
+        "MCP_TOOL_MODE": "intent",
+        "OPENSEARCH_URL": "http://localhost:9200",
+        "OPENSEARCHTOOL": "True",
+        "INGESTTOOL": "True",
+        "ENABLE_DELEGATION": "True",
+        "OIDC_CONFIG_URL": "http://localhost:8080/realms/homelab/.well-known/openid-configuration",
+        "OIDC_CLIENT_ID": "",
+        "OIDC_CLIENT_SECRET_REF": "",
+        "OPENSEARCH_KEYCLOAK_CLIENT_ID": "opensearch"
+      }
+    }
+  }
+}
+```
+
+---
+
+## Architecture
+
+`api/api_client_opensearch.py`'s `OpenSearchApi` wraps `opensearchpy.OpenSearch`
+directly (the fleet's one new dependency this package adds). Its transport
+auth is `api/api_client_base.py`'s `_PerCallBearerAuth` — a
+`requests.auth.AuthBase` callable that `opensearchpy`'s
+`RequestsHttpConnection` invokes fresh on EVERY outbound request (checked
+against opensearch-py 3.2.0's own source: `RequestsHttpConnection.__init__`
+assigns `http_auth` directly to `requests.Session.auth`, and `requests` calls
+an `AuthBase.__call__` per request, never once at session construction).
+
+`auth.py`'s `get_client()` is the ONLY client factory in the package. It
+exchanges the calling MCP principal's own token for one scoped to the
+`opensearch` Keycloak client audience via the fleet's shared
+`scion_sdk.mcp.delegated_auth` (RFC 8693 token exchange) — and, unlike
+`gitlab-api`/`twenty-mcp`'s use of the same helper, it has **no fallback to a
+fixed/service credential**: if delegation isn't enabled or the exchange
+fails, it raises. No tool in `mcp/mcp_opensearch.py` or `kg_ingest.py` accepts
+a credential override parameter of any kind.
+
+`mcp/mcp_opensearch.py` registers four tool groups (`index`, `search`,
+`pipelines`, `security`) via one `register_tool_surface(...)` call in
+`mcp_server.py`, matching the fleet's one-registration-call convention.
+`kg_ingest.py` registers the fifth group (`opensearch_reindex_from_kg`,
+tagged `ingest`/`kg`/`kg_ingest`) — a trigger-only tool that records an
+`:IndexingRun` node through the required `native_ingest` (Wire-First)
+authority; it never performs the reindex itself (CA-24 does).
+
+`opensearch_apply_dls_bundle` validates a caller-supplied DEC-CA-04 policy
+bundle's shape (`renderings.opensearch`, `governs: ["M1"]`, `graph`) before
+applying it — this package contains no code path that builds a DLS
+predicate from scratch.
+
+---
 
 ## Documentation
 See `docs/` for architecture, configuration, and deployment notes, and
 `AGENTS.md` for domain-specific traps (the calling-principal invariant, the
 k-NN-disabled degrade path, and the DLS-bundle-never-hand-authored rule).
-
-## Available MCP Tools
-
-<!-- MCP-TOOLS-TABLE:START -->
-
-#### Condensed action-routed tools (`MCP_TOOL_MODE=condensed`)
-
-| MCP Tool | Toggle Env Var | Description |
-|----------|----------------|-------------|
-| `opensearch_apply_dls_bundle` | `OPENSEARCHTOOL` | Apply a CA-16/26-rendered policy bundle's OpenSearch renderings. |
-| `opensearch_ingest_pipeline` | `OPENSEARCHTOOL` | Read or define an ingest pipeline. |
-| `opensearch_reindex_from_kg` | `INGESTTOOL` | Request a reindex of ``index_pattern`` from the KG's current state. |
-
-#### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)
-
-<details>
-<summary>18 per-operation tools — one per public API method (click to expand)</summary>
-
-| MCP Tool | Toggle Env Var | Description |
-|----------|----------------|-------------|
-| `opensearch_apply_dls_bundle_rendering` | `OPEN_SEARCH_APITOOL` | Apply ONE already-validated ``renderings.opensearch`` entry. |
-| `opensearch_cluster_health` | `OPEN_SEARCH_APITOOL` | Invoke the cluster_health operation. |
-| `opensearch_create_index` | `OPENSEARCHTOOL` | Invoke the create_index operation. |
-| `opensearch_delete_index` | `OPENSEARCHTOOL` | Invoke the delete_index operation. |
-| `opensearch_get_aliases` | `OPENSEARCHTOOL` | Invoke the get_aliases operation. |
-| `opensearch_get_ingest_pipeline` | `OPEN_SEARCH_APITOOL` | Invoke the get_ingest_pipeline operation. |
-| `opensearch_ingest_pipeline__get` | `MUTATINGTOOL` | Read or define an ingest pipeline. |
-| `opensearch_ingest_pipeline__put` | `MUTATINGTOOL` | Read or define an ingest pipeline. |
-| `opensearch_manage_alias` | `OPENSEARCHTOOL` | Apply one or more alias actions (``{"add": {...}}``/``{"remove": {...}}``). |
-| `opensearch_put_ingest_pipeline` | `OPEN_SEARCH_APITOOL` | Invoke the put_ingest_pipeline operation. |
-| `opensearch_read_dls_rules` | `OPENSEARCHTOOL` | Read one OpenSearch security-plugin role's index permissions/DLS query. |
-| `opensearch_rollover` | `OPENSEARCHTOOL` | Invoke the rollover operation. |
-| `opensearch_search` | `OPENSEARCHTOOL` | Invoke the search operation. |
-| `opensearch_update_mapping` | `OPENSEARCHTOOL` | Invoke the update_mapping operation. |
-| `opensearch_update_settings` | `OPENSEARCHTOOL` | Invoke the update_settings operation. |
-
-</details>
-
-_3 action-routed tool(s) · 18 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (**`intent` default** — the six verb-tools, granular set loaded on demand · `condensed` action-routed · `verbose` 1:1 · `both`). Auto-generated — do not edit._
-<!-- MCP-TOOLS-TABLE:END -->
 
 ---
 
