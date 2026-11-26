@@ -2,15 +2,7 @@
 name: opensearch-search
 skill_type: skill
 description: >-
-  Run BM25 text queries against OpenSearch (CA-50 search tier)
-  via the lucerna-mcp MCP server's search tool group, and inspect/apply
-  document-level-security (DLS) policy — always as the calling principal, so
-  DLS applies per-request; this package never constructs an admin/service-
-  level-bypass client for a search call. Use when the agent must search
-  indexed KG content, or read/apply a CA-16/26-rendered DLS bundle. Do NOT
-  use for index/alias/mapping administration (use
-  opensearch-index-operations) or for triggering a reindex (use
-  opensearch-kg-ingestion).
+  Run BM25 text queries on OpenSearch (CA-50) via the lucerna-mcp search tools, and read or apply DLS policy bundles as the calling principal. Use to search indexed KG content or apply a rendered DLS bundle. Do NOT use for index admin (opensearch-index-operations) or reindexing (opensearch-kg-ingestion).
 license: MIT
 tags: [opensearch, search, dls, security, mcp]
 metadata:
@@ -18,6 +10,8 @@ metadata:
   version: '0.2.0'
 ---
 # OpenSearch Search
+
+Scope: Run BM25 text queries against OpenSearch (CA-50 search tier) via the lucerna-mcp MCP server's search tool group, and inspect/apply document-level-security (DLS) policy — always as the calling principal, so DLS applies per-request; this package never constructs an admin/service- level-bypass client for a search call. Use when the agent must search indexed KG content, or read/apply a CA-16/26-rendered DLS bundle. Do NOT use for index/alias/mapping administration (use opensearch-index-operations) or for triggering a reindex (use opensearch-kg-ingestion).
 
 Query the CA-50 search tier and manage its document-level-security policy.
 **The single hardest invariant in this skill**: every search runs as the
@@ -52,6 +46,21 @@ identity is what determines what comes back.
 | `OPENSEARCH_URL` | recommended | Bare OpenSearch origin. Defaults to `http://localhost:9200`. |
 | `ENABLE_DELEGATION` / `OIDC_CONFIG_URL` / `OIDC_CLIENT_ID` / `OIDC_CLIENT_SECRET_REF` | ✅ | Shared scion-sdk MCP OIDC-delegation surface. Without this, every search tool raises rather than falling back to an unauthenticated or admin-scoped call. |
 | `OPENSEARCH_KEYCLOAK_CLIENT_ID` | optional | Delegated-token audience. Defaults to `opensearch`. |
+
+## Steps
+
+1. Confirm the delegated identity is configured by calling `opensearch_read_dls_rules`(role) for the target role. Verify it returns the role's DLS query or a typed error naming missing delegation settings.
+2. Run the query with `opensearch_search`(index, query), keeping the hit limit at or below 100. Verify the response lists hits (or zero hits) without a permission-denied error.
+3. If a restricted principal gets zero hits for a document expected to exist, inspect the role with `opensearch_read_dls_rules`(role). Verify the DLS query matches the document rather than widening the query.
+4. To change policy, pass a CA-16/26-rendered bundle to `opensearch_apply_dls_bundle`(bundle). Verify the response lists each applied `renderings.opensearch` entry and no field error.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| `OpenSearchApiError` on every call | No delegated token: `ENABLE_DELEGATION`, `OIDC_CONFIG_URL`, `OIDC_CLIENT_ID` or `OIDC_CLIENT_SECRET_REF` unset | Set the four variables on the `lucerna-mcp` server and reconnect with a principal session |
+| Bundle rejected with a field error | Missing `renderings.opensearch`, unrecognized `governs`, or missing `graph` | Regenerate the bundle from its CA-16/26 source and pass it unchanged to `opensearch_apply_dls_bundle` |
+| Zero hits for an expected document | DLS hides it from this principal (correct behavior) | Read the role with `opensearch_read_dls_rules`(role) and fix the policy bundle, not the query |
 
 ## Tools
 

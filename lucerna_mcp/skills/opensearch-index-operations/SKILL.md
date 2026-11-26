@@ -2,14 +2,7 @@
 name: opensearch-index-operations
 skill_type: skill
 description: >-
-  Administer OpenSearch (CA-50 search tier) indices via the lucerna-mcp MCP
-  server's index tool group — create indices, update mappings, manage/swap
-  aliases, update index settings, roll an alias over to a new backing index,
-  and delete indices. Use when the agent must provision or reshape the
-  derived, KG-rebuildable search index layer. Do NOT use for querying data
-  (use opensearch-search) or for pushing KG state into the index (use
-  opensearch-kg-ingestion, which only triggers CA-24's rebuild — this package
-  never performs the reindex itself).
+  Administer OpenSearch (CA-50) indices via the lucerna-mcp index tools: create indices, update mappings and settings, manage aliases, roll over, delete. Use to provision or reshape the rebuildable search index. Do NOT use for querying (opensearch-search) or reindexing (opensearch-kg-ingestion).
 license: MIT
 tags: [opensearch, search, index, mcp]
 metadata:
@@ -17,6 +10,8 @@ metadata:
   version: '0.2.0'
 ---
 # OpenSearch Index Operations
+
+Scope: Administer OpenSearch (CA-50 search tier) indices via the lucerna-mcp MCP server's index tool group — create indices, update mappings, manage/swap aliases, update index settings, roll an alias over to a new backing index, and delete indices. Use when the agent must provision or reshape the derived, KG-rebuildable search index layer. Do NOT use for querying data (use opensearch-search) or for pushing KG state into the index (use opensearch-kg-ingestion, which only triggers CA-24's rebuild — this package never performs the reindex itself).
 
 Create and administer OpenSearch indices/aliases/settings for the CA-50
 search tier. The index is a fully derived, rebuildable projection of the KG
@@ -56,6 +51,22 @@ fallback (see `lucerna-mcp`'s `AGENTS.md`).
 | `ENABLE_DELEGATION` / `OIDC_CONFIG_URL` / `OIDC_CLIENT_ID` / `OIDC_CLIENT_SECRET_REF` | ✅ | Shared scion-sdk MCP OIDC-delegation surface — required for ANY tool in this package to authenticate. |
 | `OPENSEARCH_KEYCLOAK_CLIENT_ID` | optional | Delegated-token audience. Defaults to `opensearch`. |
 | `OPENSEARCH_TLS_PROFILE` / `OPENSEARCH_TLS_PROFILE_REF` | optional | Named outbound TLS trust policy. |
+
+## Steps
+
+1. Inspect current state with `opensearch_get_aliases`(index). Verify the response lists the aliases you expect before changing anything.
+2. Create the index with `opensearch_create_index`(index, mappings). Verify the response is success or `already_exists: true`.
+3. Reshape it with `opensearch_update_mapping`(index, properties) or `opensearch_update_settings`(index, settings). Verify the response acknowledges the change.
+4. Point traffic with `opensearch_manage_alias`(actions), or roll over with `opensearch_rollover`(alias, conditions). Verify `opensearch_get_aliases`(index) shows the new backing index.
+5. Remove a retired index with `opensearch_delete_index`(index) only after step 4 shows it is no longer aliased. Verify it no longer appears in `opensearch_get_aliases`.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| `OpenSearchApiError` on any call | Non-2xx from OpenSearch or missing delegated credential | Read the error status, fix `OPENSEARCH_URL` or the `OIDC_*` variables on the `lucerna-mcp` server, and resubmit the same tool call |
+| Mapping update rejected | Field type conflicts with the existing mapping | Create a new index with the corrected mapping and swap the alias with `opensearch_manage_alias` |
+| Rollover reports no conditions met | Size or age thresholds not reached | Lower the conditions passed to `opensearch_rollover` or wait until `opensearch_get_aliases` shows the threshold is met |
 
 ## Tools
 
